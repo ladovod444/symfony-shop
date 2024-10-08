@@ -12,7 +12,7 @@ class ProductImport
   }
 
   public function import(array $products_data): void {
-    $products_data = $this->httpClient->get()
+    //$products_data = $this->httpClient->get();
   }
 
   public function createProduct(array $product_data): Product {
