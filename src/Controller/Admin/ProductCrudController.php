@@ -42,9 +42,10 @@ class ProductCrudController extends AbstractCrudController
       yield     TextField::new('regular_price');
       yield     TextEditorField::new('description');
       yield ImageField::new('image')
-        ->setBasePath('/uploads/photos')
-        ->setLabel('Photo')
-        ->onlyOnIndex();
+        ->setBasePath('/uploads/images')
+        ->setUploadDir('public/uploads/images')
+        ->setLabel('Image');
+        //->onlyOnIndex();
       // https://symfony.com/doc/4.x/EasyAdminBundle/fields/AssociationField.html
       yield AssociationField::new('user_id')
         ->setQueryBuilder( fn() =>
