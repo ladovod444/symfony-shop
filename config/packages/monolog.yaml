@@ -18,6 +18,11 @@ when@dev:
             #chromephp:
             #    type: chromephp
             #    level: info
+            import:
+                type: stream
+                path: "%kernel.logs_dir%/import-%kernel.environment%.log"
+                level: debug
+                channels: [ "import" ]
             console:
                 type: console
                 process_psr_3_messages: false
