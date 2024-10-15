@@ -18,18 +18,24 @@ class ProductImageMessageHandler
 
   public function __invoke(ProductImageMessage $productImageMessage): void
   {
-    // ... do some work - like sending an SMS message!
-    //dd($checkUniqueTextJob);
-    $productId = (int) $productImageMessage->getContent();
+
+    $product_data = $productImageMessage->getContent();
+    $product_data = json_decode($product_data, true);
+
+   // $productId = (int) $productImageMessage->getContent();
+    $productId = (int) $product_data['product_id'];
+    $productImage = $product_data['product_image'];
     $product = $this->productRepository->find($productId);
 
     // TODO сделать сохранение изображения, которое
     // будет храниться в сериализованных данных
-    // А пока просто сделаем img + $productId
-    $test_image = $productId . "img";
-    $product->setImage($test_image);
-    $this->entityManager->flush();
+
+    $product->setImage($productImage);
+    // TODO нужно будет сохранить уже изображение по ссылке вида
+    // https://media.fortniteapi.io/images/displayAssets/v2/MAX/DAv2_Bundle_Featured_ElegantLilyCharm/MI_0.png
+    // а потом уже сохранять ссылку уже сохраненного изображения.
 
     $this->entityManager->flush();
+
   }
 }

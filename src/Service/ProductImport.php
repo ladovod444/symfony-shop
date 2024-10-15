@@ -14,12 +14,12 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[WithMonologChannel('import')]
 class ProductImport
 {
-  public function __construct(private readonly HttpClient    $httpClient,
-                              private string                 $fortnite_api_url,
-                              private string                 $fortnite_api_key,
-                              private EntityManagerInterface $entityManager,
-                              private UserRepository         $userRepository,
-                              private LoggerInterface        $logger,
+  public function __construct(private readonly HttpClient          $httpClient,
+                              private string                       $fortnite_api_url,
+                              private string                       $fortnite_api_key,
+                              private EntityManagerInterface       $entityManager,
+                              private UserRepository               $userRepository,
+                              private LoggerInterface              $logger,
                               private readonly MessageBusInterface $bus
   )
   {
@@ -38,6 +38,7 @@ class ProductImport
     $data_count = 0;
     $this->logger->info('Start importing products');
     foreach ($products as $product_data) {
+      //dd($product_data); exit;
       $this->createProduct($product_data);
       $data_count++;
       if (($data_count % $batchSize) === 0) {
@@ -68,9 +69,16 @@ class ProductImport
       ->setUserId($user);
     $this->entityManager->persist($product);
 
-    // Отправить сообщение, пока просто id,
-    // ПОТОМ нужно еще отправлять и урл изображения
-    $this->bus->dispatch(ProductImageMessage::create($product->getId()));
+    // Отправить json сообщение, c id и урлом изображения.
+    $message = json_encode(
+      [
+        'product_id' => $product->getId(),
+        'product_image' => $product_data['displayAssets'][0]['url'],
+      ]
+    );
+
+    $this->bus->dispatch(ProductImageMessage::create($message));
+    //$this->bus->dispatch(ProductImageMessage::create($product->getId()));
     $this->logger->info('Creating product ' . $product->getTitle());
   }
 }
