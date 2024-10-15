@@ -18,6 +18,8 @@ web_environment: []
 corepack_enable: false
 default_container_timeout: "240"
 
+webimage_extra_packages: [ php8.2-amqp ]
+
 # Key features of DDEV's config.yaml:
 
 # name: <projectname> # Name of the project, automatically provides
