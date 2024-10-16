@@ -10,122 +10,121 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
-  use TimestampableEntity;
+    use TimestampableEntity;
 
-  #[ORM\Id]
-  #[ORM\GeneratedValue]
-  #[ORM\Column]
-  private ?int $id = null;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-  #[ORM\Column(length: 255)]
-  private ?string $sku = null;
+    #[ORM\Column(length: 255)]
+    private ?string $sku = null;
 
-  #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-  private ?string $current_price = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?string $current_price = null;
 
-  #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-  private ?string $regular_price = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?string $regular_price = null;
 
-  #[ORM\Column(type: Types::TEXT, nullable: true)]
-  private ?string $description = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
-  #[ORM\Column(length: 255, nullable: true)]
-  private ?string $image = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
-  #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'products')]
-  #[ORM\JoinColumn(nullable: false)]
-  private ?User $user_id = null;
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user_id = null;
 
-  #[ORM\Column(length: 255)]
-  private ?string $title = null;
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
 
-  public function getId(): ?int
-  {
-    return $this->id;
-  }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-  public function getSku(): ?string
-  {
-    return $this->sku;
-  }
+    public function getSku(): ?string
+    {
+        return $this->sku;
+    }
 
-  public function setSku(string $sku): static
-  {
-    $this->sku = $sku;
+    public function setSku(string $sku): static
+    {
+        $this->sku = $sku;
 
-    return $this;
-  }
+        return $this;
+    }
 
-  public function getCurrentPrice(): ?string
-  {
-    return $this->current_price;
-  }
+    public function getCurrentPrice(): ?string
+    {
+        return $this->current_price;
+    }
 
-  public function setCurrentPrice(string $current_price): static
-  {
-    $this->current_price = $current_price;
+    public function setCurrentPrice(string $current_price): static
+    {
+        $this->current_price = $current_price;
 
-    return $this;
-  }
+        return $this;
+    }
 
-  public function getRegularPrice(): ?string
-  {
-    return $this->regular_price;
-  }
+    public function getRegularPrice(): ?string
+    {
+        return $this->regular_price;
+    }
 
-  public function setRegularPrice(string $regular_price): static
-  {
-    $this->regular_price = $regular_price;
+    public function setRegularPrice(string $regular_price): static
+    {
+        $this->regular_price = $regular_price;
 
-    return $this;
-  }
+        return $this;
+    }
 
-  public function getDescription(): ?string
-  {
-    return $this->description;
-  }
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
-  public function setDescription(?string $description): static
-  {
-    $this->description = $description;
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
-    return $this;
-  }
+        return $this;
+    }
 
-  public function getImage(): ?string
-  {
-    return $this->image;
-  }
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
 
-  public function setImage(?string $image): static
-  {
-    $this->image = $image;
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
-    return $this;
-  }
+        return $this;
+    }
 
-  public function getUserId(): ?User
-  {
-    return $this->user_id;
-  }
+    public function getUserId(): ?User
+    {
+        return $this->user_id;
+    }
 
-  public function setUserId(?User $user_id): static
-  {
-    $this->user_id = $user_id;
+    public function setUserId(?User $user_id): static
+    {
+        $this->user_id = $user_id;
 
-    return $this;
-  }
+        return $this;
+    }
 
-  public function getTitle(): ?string
-  {
-      return $this->title;
-  }
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
 
-  public function setTitle(string $title): static
-  {
-      $this->title = $title;
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
 
-      return $this;
-  }
-
+        return $this;
+    }
 }
