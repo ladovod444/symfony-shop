@@ -27,3 +27,4 @@
 .idea/
 assets/
 symfony.lock
+public/uploads/

@@ -8,7 +8,6 @@ use App\Message\ProductImageMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
-use SebastianBergmann\FileIterator\Iterator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[WithMonologChannel('import')]
@@ -27,7 +26,7 @@ class ProductImport
   }
 
 
-  public function import(): void
+  public function import($count): void
   {
     $products_data = $this->httpClient->get($this->fortnite_api_url, $this->fortnite_api_key);
 
@@ -46,10 +45,10 @@ class ProductImport
         $this->entityManager->clear(); // Detaches all objects from Doctrine!
       }
 
-//      // Пока 40 товаров
-//      if ($data_count === 40) {
-//        break;
-//      }
+      // Если задано кол-во.
+      if ($count !== null && $data_count == $count) {
+        break;
+      }
     }
     $this->entityManager->flush(); // Persist objects that did not make up an entire batch
     $this->entityManager->clear();
