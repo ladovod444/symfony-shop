@@ -88,7 +88,8 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "php-cs-fixer": "php-cs-fixer --rules=@Symfony,-@PSR1, @PSR2, -blank_line_before_statement"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -107,6 +108,7 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^7.1",
         "symfony/stopwatch": "6.4.*",
-        "symfony/web-profiler-bundle": "6.4.*"
+        "symfony/web-profiler-bundle": "6.4.*",
+        "friendsofphp/php-cs-fixer": "3.57"
     }
 }
