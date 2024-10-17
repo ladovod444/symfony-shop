@@ -14,8 +14,7 @@ class ProductImageMessage
         return $this->content;
     }
 
-    public static function create(string $content): self
-    {
+    public static function create(string $content): self {
         return new self($content);
     }
 }
