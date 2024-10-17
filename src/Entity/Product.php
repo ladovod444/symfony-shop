@@ -151,4 +151,17 @@ class Product
 
         return $product;
     }
+
+    public static function updateFromDto(ProductDto $productDto, Product $product): static
+    {
+        $product->setTitle($productDto->title)
+            ->setSku($productDto->sku)
+            ->setCurrentPrice($productDto->current_price)
+            ->setRegularPrice($productDto->regular_price)
+            ->setDescription($productDto->description)
+            ->setImage($productDto->image);
+            //->setUserId($user);
+        return $product;
+    }
+
 }

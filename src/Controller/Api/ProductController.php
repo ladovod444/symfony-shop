@@ -6,7 +6,6 @@ use App\Dto\ProductDto;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,6 +65,23 @@ class ProductController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json($product, Response::HTTP_CREATED);
+    }
 
+    #[Route('/api/product/dto/{product}', name: 'api-product-update-dto', methods: ['put'], format: 'json')]
+    public function updateDto(Product $product, #[MapRequestPayload] ProductDto $productDto): Response
+    {
+        $product = Product::updateFromDto($productDto, $product);
+        $this->entityManager->flush();
+
+        return $this->json($product, Response::HTTP_OK);
+    }
+
+    #[Route('/api/product/{product}', name: 'api-product-delete', methods: ['delete'], format: 'json')]
+    public function delete(Product $product): Response
+    {
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
+
+        return $this->json([], Response::HTTP_NO_CONTENT);
     }
 }
