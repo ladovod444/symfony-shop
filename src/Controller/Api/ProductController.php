@@ -7,13 +7,15 @@ use App\Entity\Product;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-
+use OpenApi\Attributes as OA;
+#[OA\Tag(name: "Products api")]
 class ProductController extends AbstractController
 {
     const ITEMS_PER_PAGE = 10;
@@ -26,7 +28,15 @@ class ProductController extends AbstractController
 
     }
 
-    #[Route('/api/products', name: 'products')]
+    #[Route('/api/product/list', name: 'api-products-list', methods: ['GET'], format: 'json')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns Product, yes!!!',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Product::class, groups: ['full']))
+        )
+    )]
     public function index(Request $request): Response
     {
         $page = $request->get('page', 0);
@@ -51,6 +61,11 @@ class ProductController extends AbstractController
     }
 
     #[Route('/api/product/dto', name: 'api-product-add-dto', methods: ['post'], format: 'json')]
+    #[OA\Response(
+        response: 200,
+        description: 'Create a product',
+        content:  new Model(type: ProductDto::class)
+    )]
     public function addDto(Request $request, #[MapRequestPayload] ProductDto $ProductDto): Response
     //                         #[MapRequestPayload(
     //                          // acceptFormat: 'json',
@@ -68,6 +83,12 @@ class ProductController extends AbstractController
     }
 
     #[Route('/api/product/dto/{product}', name: 'api-product-update-dto', methods: ['put'], format: 'json')]
+    #[Route('/api/product/dto', name: 'api-product-add-dto', methods: ['post'], format: 'json')]
+    #[OA\Response(
+        response: 200,
+        description: 'Update a product',
+        content:  new Model(type: ProductDto::class)
+    )]
     public function updateDto(Product $product, #[MapRequestPayload] ProductDto $productDto): Response
     {
         $product = Product::updateFromDto($productDto, $product);
@@ -77,6 +98,11 @@ class ProductController extends AbstractController
     }
 
     #[Route('/api/product/{product}', name: 'api-product-delete', methods: ['delete'], format: 'json')]
+    #[OA\Response(
+        response: 204,
+        description: 'Update a product',
+//        content:  new Model(type: ProductDto::class)
+    )]
     public function delete(Product $product): Response
     {
         $this->entityManager->remove($product);
