@@ -13,19 +13,20 @@ class ProductController extends AbstractController
 {
     const ITEMS_PER_PAGE = 10;
 
-    public function __construct(private ProductRepository $productRepository) {
+    public function __construct(private ProductRepository $productRepository)
+    {
 
     }
 
     #[Route('/api/products', name: 'products')]
-    public function index(Request $request): Response {
+    public function index(Request $request): Response
+    {
         $page = $request->get('page', 0);
 
         // Добавлена простая пагинация.
         if ($page) {
             $offset = ($page - 1) * self::ITEMS_PER_PAGE;
-        }
-        else { // Чтобы не выводить все пока выведем по умолчанию только 10
+        } else { // Чтобы не выводить все пока выведем по умолчанию только 10
             $offset = 0;
             //$page = 1;
         }
