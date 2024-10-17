@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use App\Dto\ProductDto;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
@@ -134,5 +136,19 @@ class Product
         $this->title = $title;
 
         return $this;
+    }
+
+    public static function createFromDto(UserInterface|User $user, ProductDto $productDto): static
+    {
+        $product = new self();
+        $product->setTitle($productDto->title)
+            ->setSku($productDto->sku)
+            ->setCurrentPrice($productDto->current_price)
+            ->setRegularPrice($productDto->regular_price)
+            ->setDescription($productDto->description)
+            ->setImage($productDto->image)
+            ->setUserId($user);
+
+        return $product;
     }
 }
