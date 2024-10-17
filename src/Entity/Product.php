@@ -6,6 +6,7 @@ use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -15,21 +16,27 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['products:api:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['products:api:list'])]
     private ?string $sku = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['products:api:list'])]
     private ?string $current_price = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['products:api:list'])]
     private ?string $regular_price = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['products:api:list'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['products:api:list'])]
     private ?string $image = null;
 
     #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'products')]
@@ -37,6 +44,7 @@ class Product
     private ?User $user_id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['products:api:list'])]
     private ?string $title = null;
 
     public function getId(): ?int
