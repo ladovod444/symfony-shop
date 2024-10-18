@@ -10,9 +10,7 @@ class OrderItemDto
 {
     public function __construct(
         //#[MapEntity(Product::class)]
-        #[Assert\NotBlank]
         public readonly ?string $product,
-        #[Assert\NotBlank]
         public readonly ?string  $order,
         #[Assert\NotBlank]
         public readonly ?string  $quantity,

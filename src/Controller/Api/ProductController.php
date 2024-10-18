@@ -103,7 +103,7 @@ class ProductController extends AbstractController
     #[Route('/api/product/{product}', name: 'api-product-delete', methods: ['delete'], format: 'json')]
     #[OA\Response(
         response: 204,
-        description: 'Update a product',
+        description: 'Delete product',
 //        content:  new Model(type: ProductDto::class)
     )]
     public function delete(Product $product): Response

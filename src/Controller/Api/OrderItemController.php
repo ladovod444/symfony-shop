@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use OpenApi\Attributes as OA;
 
 class OrderItemController extends AbstractController
 {
@@ -27,6 +28,7 @@ class OrderItemController extends AbstractController
     ) {
 
     }
+
     const ITEMS_PER_PAGE = 10;
 
     // По сути данный action нужен только для тестирования
@@ -51,15 +53,16 @@ class OrderItemController extends AbstractController
 
         return $this->json($products, Response::HTTP_OK, context: [
             //AbstractNormalizer::GROUPS => ['products:api:list'],
+            AbstractNormalizer::GROUPS => ['user_order:api:list'],
         ]);
     }
 
     #[Route('/api/order-item/dto', name: 'api-order-item-add-dto', methods: ['post'], format: 'json')]
-//    #[OA\Response(
-//        response: 200,
-//        description: 'Create a product',
-//        content:  new Model(type: ProductDto::class)
-//    )]
+    //    #[OA\Response(
+    //        response: 200,
+    //        description: 'Create a product',
+    //        content:  new Model(type: ProductDto::class)
+    //    )]
     public function addDto(Request $request, #[MapRequestPayload] OrderItemDto $orderItemDto): Response
     {
 
@@ -71,7 +74,8 @@ class OrderItemController extends AbstractController
 
         // При добавлении
         // Если нет еще Order, то по сути его нужно создать
-        $orderItem = OrderItem::createFromDto($user,
+        $orderItem = OrderItem::createFromDto(
+            $user,
             $orderItemDto,
             $this->orderRepository,
             $this->productRepository,
@@ -87,5 +91,36 @@ class OrderItemController extends AbstractController
         return $this->json($orderItem, Response::HTTP_CREATED, context: [
             AbstractNormalizer::GROUPS => ['user_order:api:list'],
         ]);
+    }
+
+    // При обновлении Order Item обычно обновляется кол-во,
+    // т.е. товар или добавили в корзину еще раз или уже в корзине увеличили кол-во
+    #[Route('/api/order-item/dto/{order_item}', name: 'api-order-item-update-dto', methods: ['patch'], format: 'json')]
+    public function updateDto(OrderItem $order_item, #[MapRequestPayload] OrderItemDto $orderItemDto): Response
+    {
+        $orderItem = OrderItem::updateFromDto(
+            $orderItemDto,
+            $order_item
+        );
+
+
+        $this->entityManager->flush();
+
+        return $this->json($orderItem, Response::HTTP_OK, context: [
+            AbstractNormalizer::GROUPS => ['user_order:api:list'],
+        ]);
+    }
+
+    #[Route('/api/order-item/{order_item}', name: 'api-order-item-delete', methods: ['delete'], format: 'json')]
+    #[OA\Response(
+        response: 204,
+        description: 'Delete order item',
+    )]
+    public function delete(OrderItem $order_item): Response
+    {
+        $this->entityManager->remove($order_item);
+        $this->entityManager->flush();
+
+        return $this->json([], Response::HTTP_NO_CONTENT);
     }
 }

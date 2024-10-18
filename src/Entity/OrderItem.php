@@ -100,5 +100,13 @@ class OrderItem
         $orderItem->setOrd($order);
         return $orderItem;
     }
-    
+
+    public static function updateFromDto(OrderItemDto $dto, OrderItem $orderItem): static
+    {
+        $quantity = $dto->quantity;
+        $orderItem->setQuantity($quantity);
+
+        return $orderItem;
+    }
+
 }
