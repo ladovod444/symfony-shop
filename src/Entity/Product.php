@@ -43,6 +43,7 @@ class Product
 
     #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['products:api:list'])]
     private ?User $user_id = null;
 
     #[ORM\Column(length: 255)]

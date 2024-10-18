@@ -79,11 +79,12 @@ class ProductController extends AbstractController
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return $this->json($product, Response::HTTP_CREATED);
+        return $this->json($product, Response::HTTP_CREATED, context: [
+            AbstractNormalizer::GROUPS => ['products:api:list'],
+        ]);
     }
 
     #[Route('/api/product/dto/{product}', name: 'api-product-update-dto', methods: ['put'], format: 'json')]
-    #[Route('/api/product/dto', name: 'api-product-add-dto', methods: ['post'], format: 'json')]
     #[OA\Response(
         response: 200,
         description: 'Update a product',
@@ -94,7 +95,9 @@ class ProductController extends AbstractController
         $product = Product::updateFromDto($productDto, $product);
         $this->entityManager->flush();
 
-        return $this->json($product, Response::HTTP_OK);
+        return $this->json($product, Response::HTTP_OK, context: [
+            AbstractNormalizer::GROUPS => ['products:api:list'],
+        ]);
     }
 
     #[Route('/api/product/{product}', name: 'api-product-delete', methods: ['delete'], format: 'json')]
