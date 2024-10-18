@@ -87,14 +87,22 @@ class OrderItem
         $product = $productRepository->find($dto->product);
         $orderItem->setProduct($product);
 
+        $createOrder = false;
         if (null !== $dto->order) {
             $order = $orderRepository->find((int)$dto->order);
             if (null === $order) {
-                $order = new Order();
-                $order->setOwner($user);
-                $entityManager->persist($order);
-                $entityManager->flush();
+                $createOrder = true;
             }
+        } else {
+            $createOrder = true;
+        }
+
+        if ($createOrder) {
+            $order = new Order();
+            $order->setOwner($user);
+            $order->setStatus('cart');
+            $entityManager->persist($order);
+            $entityManager->flush();
         }
 
         $orderItem->setOrd($order);
