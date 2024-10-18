@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Dto\OrderItemDto;
 use App\Entity\Order;
 use App\Entity\OrderItem;
+use App\Entity\User;
 use App\Repository\OrderItemRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
@@ -47,6 +48,37 @@ class OrderController extends AbstractController
         }
         $orders = $this->orderRepository->findBy(
             [],
+            ['id' => 'DESC'],
+            limit: self::ITEMS_PER_PAGE,
+            offset: $offset
+        );
+
+        return $this->json($orders, Response::HTTP_OK, context: [
+            //AbstractNormalizer::GROUPS => ['products:api:list'],
+            AbstractNormalizer::GROUPS => ['order:api:list'],
+        ]);
+    }
+
+    /**
+     * User Orders.
+     * @param User $user
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/api/order/user/{user}', name: 'api-order-user-orders', methods: ['GET'], format: 'json')]
+    public function indexUser(User $user, Request $request): Response
+    {
+        $page = $request->get('page', 0);
+
+        // Добавлена простая пагинация.
+        if ($page) {
+            $offset = ($page - 1) * self::ITEMS_PER_PAGE;
+        } else { // Чтобы не выводить все пока выведем по умолчанию только 10
+            $offset = 0;
+            //$page = 1;
+        }
+        $orders = $this->orderRepository->findBy(
+            ['owner' => $user->getId()],
             ['id' => 'DESC'],
             limit: self::ITEMS_PER_PAGE,
             offset: $offset
