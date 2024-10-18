@@ -22,7 +22,7 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['products:api:list'])]
+    #[Groups(['products:api:list', 'user_order:api:list'])]
     private ?string $sku = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
@@ -47,7 +47,7 @@ class Product
     private ?User $user_id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['products:api:list'])]
+    #[Groups(['products:api:list', 'user_order:api:list'])]
     private ?string $title = null;
 
     public function getId(): ?int

@@ -16,13 +16,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User_OLD implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableEntity;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['products:api:list', 'user_order:api:list'])]
+    #[Groups(['products:api:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
@@ -45,14 +45,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isVerified = false;
 
     /**
-     * @var Collection<int, Order>
+     * @var Collection<int, Product>
      */
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'owner', orphanRemoval: true)]
-    private Collection $orders;
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'user_id')]
+    private Collection $products;
 
     public function __construct()
     {
-        $this->orders = new ArrayCollection();
+        $this->products = new ArrayCollection();
     }
 
     public function isVerified(): bool
@@ -140,39 +140,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function __toString(): string
-    {
-        return (string) $this->getEmail();
-    }
-
     /**
-     * @return Collection<int, Order>
+     * @return Collection<int, Product>
      */
-    public function getOrders(): Collection
+    public function getProducts(): Collection
     {
-        return $this->orders;
+        return $this->products;
     }
 
-    public function addOrder(Order $order): static
+    public function addProduct(Product $product): static
     {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
-            $order->setOwner($this);
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+            $product->setUserId($this);
         }
 
         return $this;
     }
 
-    public function removeOrder(Order $order): static
+    public function removeProduct(Product $product): static
     {
-        if ($this->orders->removeElement($order)) {
+        if ($this->products->removeElement($product)) {
             // set the owning side to null (unless already changed)
-            if ($order->getOwner() === $this) {
-                $order->setOwner(null);
+            if ($product->getUserId() === $this) {
+                $product->setUserId(null);
             }
         }
 
         return $this;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->getEmail();
+    }
 }
