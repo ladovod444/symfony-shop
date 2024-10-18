@@ -17,18 +17,19 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user_order:api:list'])]
+    #[Groups(['user_order:api:list', 'order:api:list'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['user_order:api:list'])]
+    #[Groups(['user_order:api:list', 'order:api:list'])]
     private ?User $owner = null;
 
     /**
      * @var Collection<int, OrderItem>
      */
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'ord', orphanRemoval: true)]
+    #[Groups(['order:api:list'])]
     private Collection $orderItems;
 
     public function __construct()

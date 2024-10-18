@@ -16,16 +16,16 @@ class OrderItem
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user_order:api:list'])]
+    #[Groups(['user_order:api:list', 'order:api:list'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['user_order:api:list'])]
+    #[Groups(['user_order:api:list', 'order:api:list'])]
     private ?int $quantity = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['user_order:api:list'])]
+    #[Groups(['user_order:api:list', 'order:api:list'])]
     private ?Product $product = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderItems')]
@@ -79,7 +79,7 @@ class OrderItem
         ProductRepository $productRepository,
         EntityManagerInterface $entityManager,
         OrderItemRepository $orderItemRepository
-    ): self {
+    ): static {
         // ЕСЛИ заказ уже создан - это наверно должно быть Update
 
         $orderItem = new self();
@@ -103,8 +103,10 @@ class OrderItem
 
     public static function updateFromDto(OrderItemDto $dto, OrderItem $orderItem): static
     {
-        $quantity = $dto->quantity;
-        $orderItem->setQuantity($quantity);
+        if ($dto->quantity) {
+            $quantity = $dto->quantity;
+            $orderItem->setQuantity($quantity);
+        }
 
         return $orderItem;
     }
