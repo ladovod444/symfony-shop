@@ -9,6 +9,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -23,7 +24,8 @@ class ProductController extends AbstractController
     public function __construct(
         private ProductRepository      $productRepository,
         private EntityManagerInterface $entityManager,
-        private UserRepository         $userRepository
+        private UserRepository         $userRepository,
+        private ParameterBagInterface $parameterBag
     ) {
 
     }
@@ -42,16 +44,20 @@ class ProductController extends AbstractController
         $page = $request->get('page', 0);
 
         // Добавлена простая пагинация.
-        if ($page) {
+        if ($page && is_numeric($page)) {
             $offset = ($page - 1) * self::ITEMS_PER_PAGE;
         } else { // Чтобы не выводить все пока выведем по умолчанию только 10
             $offset = 0;
             //$page = 1;
         }
+
+        //dd($this->parameterBag->get('app:api_per_age'));
+
         $products = $this->productRepository->findBy(
             [],
             ['id' => 'DESC'],
-            limit: self::ITEMS_PER_PAGE,
+            //limit: self::ITEMS_PER_PAGE,
+            limit: $this->parameterBag->get('app:api_per_age'),
             offset: $offset
         );
 

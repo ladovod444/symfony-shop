@@ -50,8 +50,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'owner', orphanRemoval: true)]
     private Collection $orders;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $confirmationCode = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $enabled = null;
+
     public function __construct()
     {
+        $this->enabled = false;
         $this->orders = new ArrayCollection();
     }
 
@@ -174,5 +181,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getConfirmationCode(): ?string
+    {
+        return $this->confirmationCode;
+    }
+
+    public function setConfirmationCode(?string $confirmationCode): static
+    {
+        $this->confirmationCode = $confirmationCode;
+
+        return $this;
+    }
+
+    public function getEnabled(): ?bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(?bool $enabled): static
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+
 
 }
