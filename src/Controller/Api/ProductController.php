@@ -62,6 +62,17 @@ class ProductController extends AbstractController
             offset: $offset
         );
 
+        if (!$page) {
+            $products = $this->productRepository->findBy(
+                [],
+                ['id' => 'DESC'],
+                //limit: self::ITEMS_PER_PAGE,
+//                limit: $this->parameterBag->get('app:api_per_age'),
+//                offset: $offset
+            );
+        }
+
+
         return $this->json($products, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);

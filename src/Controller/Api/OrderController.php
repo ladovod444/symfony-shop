@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api;
 
-use App\Dto\OrderItemDto;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\User;
@@ -14,11 +13,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
+#[Route('/api')]
 class OrderController extends AbstractController
 {
     public function __construct(
@@ -34,7 +34,7 @@ class OrderController extends AbstractController
     const ITEMS_PER_PAGE = 10;
 
     // По сути данный action нужен только для тестирования
-    #[Route('/api/order/list', name: 'api-order-list', methods: ['GET'], format: 'json')]
+    #[Route('/order/list', name: 'api-order-list', methods: ['GET'], format: 'json')]
     public function index(Request $request): Response
     {
         $page = $request->get('page', 0);
@@ -65,8 +65,8 @@ class OrderController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    #[Route('/api/order/user/{user}', name: 'api-order-user-orders', methods: ['GET'], format: 'json')]
-    public function indexUser(User $user, Request $request): Response
+    #[Route('/order/user/{user}', name: 'api-order-user-orders', methods: ['GET'], format: 'json')]
+    public function indexOrder(User $user, Request $request): Response
     {
         $page = $request->get('page', 0);
 
@@ -86,6 +86,38 @@ class OrderController extends AbstractController
 
         return $this->json($orders, Response::HTTP_OK, context: [
             //AbstractNormalizer::GROUPS => ['products:api:list'],
+            AbstractNormalizer::GROUPS => ['order:api:list'],
+        ]);
+    }
+
+    #[Route('/order/create-order', name: 'api-order-create-order', methods: ['POST'], format: 'json')]
+    #[OA\Response(
+        response: 200,
+        description: 'Create an Order',
+        content:  new Model(type: Order::class)
+    )]
+    public function createOrder(Request $request): Response
+    {
+        $payload = json_decode($request->getContent(), true);
+
+        $order = new Order();
+        $user = $this->userRepository->findOneBy(['email' => $payload['mail']]);
+        $order->setOwner($user);
+        $this->entityManager->persist($order);
+
+        foreach ($payload['order'] as $order_item) {
+            $orderItem = new OrderItem();
+            $orderItem->setProduct($this->productRepository->find($order_item['id']))
+                ->setQuantity($order_item['quantity'])
+                ->setOrd($order);
+            $this->entityManager->persist($orderItem);
+            $order->addOrderItem($orderItem);
+        }
+        $order->setStatus('created');
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+
+        return $this->json($order, Response::HTTP_CREATED, context: [
             AbstractNormalizer::GROUPS => ['order:api:list'],
         ]);
     }
