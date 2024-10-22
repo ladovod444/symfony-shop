@@ -34,7 +34,7 @@ class ProductController extends AbstractController
     #[Route('/product/list', name: 'api-products-list', methods: ['GET'], format: 'json')]
     #[OA\Response(
         response: 200,
-        description: 'Returns Product, yes!!!',
+        description: 'Returns Products list, yes!!!',
         content: new OA\JsonContent(
             type: 'array',
             items: new OA\Items(ref: new Model(type: Product::class, groups: ['full']))
@@ -63,6 +63,22 @@ class ProductController extends AbstractController
         );
 
         return $this->json($products, Response::HTTP_OK, context: [
+            AbstractNormalizer::GROUPS => ['products:api:list'],
+        ]);
+    }
+
+    #[Route('/product/{product}', name: 'api-product', methods: ['GET'], format: 'json')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns Product, yes!!!',
+        content:  new Model(type: ProductDto::class)
+    )]
+    public function getProduct(Product $product): Response
+    {
+        if (null === $product) {
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        return $this->json($product, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);
     }
