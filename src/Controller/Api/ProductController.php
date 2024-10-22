@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 #[OA\Tag(name: "Products api")]
+#[Route('/api')]
 class ProductController extends AbstractController
 {
     const ITEMS_PER_PAGE = 10;
@@ -30,7 +31,7 @@ class ProductController extends AbstractController
 
     }
 
-    #[Route('/api/product/list', name: 'api-products-list', methods: ['GET'], format: 'json')]
+    #[Route('/product/list', name: 'api-products-list', methods: ['GET'], format: 'json')]
     #[OA\Response(
         response: 200,
         description: 'Returns Product, yes!!!',
@@ -66,7 +67,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/api/product/dto', name: 'api-product-add-dto', methods: ['post'], format: 'json')]
+    #[Route('/product/dto', name: 'api-product-add-dto', methods: ['post'], format: 'json')]
     #[OA\Response(
         response: 200,
         description: 'Create a product',
@@ -90,7 +91,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/api/product/dto/{product}', name: 'api-product-update-dto', methods: ['put'], format: 'json')]
+    #[Route('/product/dto/{product}', name: 'api-product-update-dto', methods: ['put'], format: 'json')]
     #[OA\Response(
         response: 200,
         description: 'Update a product',
@@ -106,7 +107,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/api/product/{product}', name: 'api-product-delete', methods: ['delete'], format: 'json')]
+    #[Route('/product/{product}', name: 'api-product-delete', methods: ['delete'], format: 'json')]
     #[OA\Response(
         response: 204,
         description: 'Delete product',
