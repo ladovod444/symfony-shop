@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
+#[OA\Tag(name: "Orders api")]
 #[Route('/api')]
 class OrderController extends AbstractController
 {

@@ -17,6 +17,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 
+#[OA\Tag(name: "Orders api")]
+#[Route('/api')]
 class OrderItemController extends AbstractController
 {
     public function __construct(
@@ -32,7 +34,7 @@ class OrderItemController extends AbstractController
     const ITEMS_PER_PAGE = 10;
 
     // По сути данный action нужен только для тестирования
-    #[Route('/api/order-item/list', name: 'api-order-items-list', methods: ['GET'], format: 'json')]
+    #[Route('/order-item/list', name: 'api-order-items-list', methods: ['GET'], format: 'json')]
     public function index(Request $request): Response
     {
         $page = $request->get('page', 0);
@@ -57,7 +59,7 @@ class OrderItemController extends AbstractController
         ]);
     }
 
-    #[Route('/api/order-item/dto', name: 'api-order-item-add-dto', methods: ['post'], format: 'json')]
+    #[Route('/order-item/dto', name: 'api-order-item-add-dto', methods: ['post'], format: 'json')]
     //    #[OA\Response(
     //        response: 200,
     //        description: 'Create a product',
@@ -95,7 +97,7 @@ class OrderItemController extends AbstractController
 
     // При обновлении Order Item обычно обновляется кол-во,
     // т.е. товар или добавили в корзину еще раз или уже в корзине увеличили кол-во
-    #[Route('/api/order-item/dto/{order_item}', name: 'api-order-item-update-dto', methods: ['patch'], format: 'json')]
+    #[Route('/order-item/dto/{order_item}', name: 'api-order-item-update-dto', methods: ['patch'], format: 'json')]
     public function updateDto(OrderItem $order_item, #[MapRequestPayload] OrderItemDto $orderItemDto): Response
     {
         $orderItem = OrderItem::updateFromDto(
@@ -111,7 +113,7 @@ class OrderItemController extends AbstractController
         ]);
     }
 
-    #[Route('/api/order-item/{order_item}', name: 'api-order-item-delete', methods: ['delete'], format: 'json')]
+    #[Route('/order-item/{order_item}', name: 'api-order-item-delete', methods: ['delete'], format: 'json')]
     #[OA\Response(
         response: 204,
         description: 'Delete order item',
