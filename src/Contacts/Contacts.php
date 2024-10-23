@@ -3,13 +3,19 @@
 namespace App\Contacts;
 
 use App\Entity\User;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Contacts
 {
-    public function __construct(public ?string $title = null,
-                                public ?string $body = null,
-                                public ?string $email = null,
-                                private ?User $user = null,) {
+    public function __construct(
+        #[Assert\NotBlank(message: 'Заголовок обязателен для заполнения')]
+        public ?string $title = null,
+        #[Assert\NotBlank(message: 'Поле "Сообщение" обязателено для заполнения')]
+        public ?string $body = null,
+        #[Assert\NotBlank(message: 'Поле "Email" обязателено для заполнения')]
+        public ?string $email = null,
+        private ?User  $user = null,)
+    {
 
     }
 
