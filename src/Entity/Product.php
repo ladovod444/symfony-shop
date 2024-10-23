@@ -165,4 +165,8 @@ class Product
         return $product;
     }
 
+    public function __toString(): string
+    {
+        return $this->getTitle() ?? '';
+    }
 }

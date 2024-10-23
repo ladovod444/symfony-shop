@@ -28,7 +28,7 @@ class Order
     /**
      * @var Collection<int, OrderItem>
      */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'ord', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'ord', cascade: ['persist'], orphanRemoval: true)]
     #[Groups(['order:api:list'])]
     private Collection $orderItems;
 
