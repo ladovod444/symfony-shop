@@ -69,4 +69,21 @@ class Mailer
 //
 //        return $this->mailer->send($message);
     }
+
+    public function sendContactsMessage($email_data) {
+        $email = (new TemplatedEmail())
+            ->from(self::FROM_ADDRESS)
+            ->to(new Address('ladovod@gmail.com'))
+            ->subject('Contacts form')
+
+            // path of the Twig template to render
+            ->htmlTemplate('contacts/contacts.html.twig')
+
+            // pass variables (name => value) to the template
+            ->context([
+                'expiration_date' => new \DateTime('+7 days'),
+                'email_data' => $email_data
+            ]);
+        $this->mailer->send($email);
+    }
 }

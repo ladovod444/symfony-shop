@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Форма контактов</title>
+</head>
+<body>
+<div class="container">
+    <p>Добро пожаловать!</p>
+    <p>Вы отправили следующие данные</p>
+    <p>
+        Тема: {{ email_data.title }}
+    </p>
+    <p>
+        Сообщение: {{ email_data.body }}
+    </p>
+    <p>
+        Отправитель: {{ email_data.email }}
+    </p>
+</div>
+</body>
+</html>
