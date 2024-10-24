@@ -10,11 +10,13 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class EmailConfirmationController extends AbstractController
 {
-    public function __construct(private UserRepository $userRepository,
-    private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private UserRepository         $userRepository,
+        private EntityManagerInterface $entityManager
+    ) {
 
     }
+
     #[Route('/email/confirmation/{code}', name: 'email_confirmation')]
     public function index(string $code): Response
     {

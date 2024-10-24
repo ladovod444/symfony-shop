@@ -12,7 +12,7 @@
     <p>Добро пожаловать, {{ user.email }}!</p>
     <p>Вы зарегистрировались на сайте...</p>
     <p>Чтобы завершить регистрацию, подтвердите
-        <a href="{{ path('email_confirmation', {'code': user.confirmationCode }) }}">электронный адрес</a>
+        <a href="{{ absolute_url(path('email_confirmation', {'code': user.confirmationCode })) }}">электронный адрес</a>
     </p>
 </div>
 </body>
