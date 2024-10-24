@@ -1,4 +1,7 @@
 security:
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+        ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
@@ -17,7 +20,7 @@ security:
                 check_path: /api/login_check # or api_login_check as defined in config/routes.yaml
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-
+            switch_user: { role: ROLE_ADMIN, parameter: _switch_user }
         api:
             pattern: ^/api
             stateless: true
@@ -39,6 +42,8 @@ security:
                 target: app_login
 
             user_checker: App\Security\UserChecker
+
+            switch_user: { role: ROLE_ADMIN, parameter: _switch_user }
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
