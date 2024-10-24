@@ -41,9 +41,10 @@ class Mailer
      */
     public function sendConfirmationMessage(User $user)
     {
+        //dd($user);
         $email = (new TemplatedEmail())
             ->from(self::FROM_ADDRESS)
-            ->to(new Address('ladovod@gmail.com'))
+            ->to(new Address($user->getEmail()))
             ->subject('Thanks for signing up!')
 
             // path of the Twig template to render
