@@ -57,8 +57,9 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/user, roles: ROLE_USER }
-#        - { path: ^/api, roles: ROLE_USER }
         - { path: ^api/doc }
+        - { path: ^/api/v1, roles: ROLE_USER }
+
 #        - { path: ^/test-auth, roles: ROLE_USER }
 
 when@test:

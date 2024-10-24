@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: "Orders api")]
-#[Route('/api')]
+#[Route('/api/v1')]
 class OrderItemController extends AbstractController
 {
     public function __construct(

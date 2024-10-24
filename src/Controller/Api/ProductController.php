@@ -8,6 +8,7 @@ use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 #[OA\Tag(name: "Products api")]
-#[Route('/api')]
+#[Route('/api/v1')]
+#[Security(name: "Bearer")]
 class ProductController extends AbstractController
 {
     const ITEMS_PER_PAGE = 10;
@@ -79,6 +81,14 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/{product}', name: 'api-product', methods: ['GET'], format: 'json')]
+    #[OA\Parameter(
+        name: "Accept-Language",
+        description: "Set language parameter by RFC2616 <https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4>",
+        in: "header",
+//        OA\Schema(
+//            type="string"
+//        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns Product, yes!!!',
