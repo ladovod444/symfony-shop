@@ -6,6 +6,8 @@ use App\Controller\OrderItemController;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Repository\UserRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -59,6 +61,13 @@ class OrderCrudController extends AbstractCrudController
             yield $updatedAt;
         }
 
+    }
+
+    public function configureActions(\EasyCorp\Bundle\EasyAdminBundle\Config\Actions $actions): Actions
+    {
+
+        return parent::configureActions($actions)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 
 }
