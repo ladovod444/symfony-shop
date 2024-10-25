@@ -118,7 +118,7 @@ class ProductController extends AbstractController
     {
         //dd($ProductDto);
         $user = $this->userRepository->findOneBy(['email' => 'ladovod@gmail.com']);
-        $product = Product::createFromDto($user, $ProductDto);
+        $product = Product::createFromDto($user, $ProductDto, $this->userRepository);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();

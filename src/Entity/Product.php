@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Dto\ProductDto;
 use App\Repository\ProductRepository;
+use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -115,12 +116,12 @@ class Product
         return $this;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
         return $this->user_id;
     }
 
-    public function setUserId(?User $user_id): static
+    public function setUser(?User $user_id): static
     {
         $this->user_id = $user_id;
 
@@ -139,8 +140,14 @@ class Product
         return $this;
     }
 
-    public static function createFromDto(UserInterface|User $user, ProductDto $productDto): static
+    public static function createFromDto(
+      UserInterface|User|null $user, ProductDto $productDto, UserRepository $userRepository
+    ): static
     {
+        if ($user === null) {
+            $user = $userRepository->findOneBy(['id'=> 1]);
+        }
+
         $product = new self();
         $product->setTitle($productDto->title)
             ->setSku($productDto->sku)
@@ -148,7 +155,7 @@ class Product
             ->setRegularPrice($productDto->regular_price)
             ->setDescription($productDto->description)
             ->setImage($productDto->image)
-            ->setUserId($user);
+            ->setUser($user);
 
         return $product;
     }
