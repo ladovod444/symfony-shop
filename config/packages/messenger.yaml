@@ -1,31 +1,70 @@
 framework:
     messenger:
-        failure_transport: failed
-
         transports:
-            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            producer:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+#                serializer: App\Infrastructure\Messenger\MySerializer
+                options:
+                    flushTimeout: 10000
+                    flushRetries: 5
+                    topic:
+                        name: 'messages'
+                    kafka_conf:
+                        log_level: '7'
+                        metadata.broker.list: '%env(KAFKA_BROKERS)%'
+                        message.send.max.retries: '5'
+                        #security.protocol: 'sasl_ssl'
+                        #ssl.ca.location: '%kernel.project_dir%/config/kafka/ca.pem'
+                        #sasl.username: '%env(KAFKA_SASL_USERNAME)%'
+                        #sasl.password: '%env(KAFKA_SASL_PASSWORD)%'
+                        #sasl.mechanisms: 'SCRAM-SHA-256'
+            consumer:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+#                serializer: App\Infrastructure\Messenger\MySerializer
+                options:
+                    commitAsync: true
+                    receiveTimeout: 10000
+                    topic:
+                        name: 'messages'
+                    kafka_conf:
+                        enable.auto.offset.store: 'false'
+                        group.id: 'my-group-id'
+                        log_level: '7'
+                        enable.auto.commit: 'true'
+                        metadata.broker.list: '%env(KAFKA_BROKERS)%'
+                        security.protocol: 'plaintext' # plaintext, ssl, sasl_plaintext, sasl_ssl
+                        auto.offset.reset: 'earliest' # 'earliest': start from the beginning
+                        enable.partition.eof: 'true' # Emit EOF event when reaching the end of a partition
+                        #security.protocol: 'sasl_ssl'
+                        #ssl.ca.location: '%kernel.project_dir%/config/kafka/ca.pem'
+                        #sasl.username: '%env(KAFKA_SASL_USERNAME)%'
+                        #sasl.password: '%env(KAFKA_SASL_PASSWORD)%'
+                        #sasl.mechanisms: 'SCRAM-SHA-256'
+                        max.poll.interval.ms: '45000'
+                    topic_conf:
+                        auto.offset.reset: 'earliest'
+
             async:
-#                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-#                options:
-#                    use_notify: true
-#                    check_delayed_interval: 60000
+                #                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                #                options:
+                #                    use_notify: true
+                #                    check_delayed_interval: 60000
                 dsn: '%env(RABBITMQ_URL)%'
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
             failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
-
-        default_bus: messenger.bus.default
-
-        buses:
-            messenger.bus.default: []
+                # sync: 'sync://'
 
         routing:
-            App\Message\ProductImageMessage: async
-#            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
-            Symfony\Component\Notifier\Message\ChatMessage: async
-            Symfony\Component\Notifier\Message\SmsMessage: async
-
             # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+#            'App\Message\SmsNotification': consumer
+            'App\Message\ProductImageMessage': consumer
+
+# when@test:
+#    framework:
+#        messenger:
+#            transports:
+#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+#                async: 'in-memory://'
