@@ -87,4 +87,21 @@ class Mailer
             ]);
         $this->mailer->send($email);
     }
+
+    public function notifyUserMessage(User $user) {
+        $email = (new TemplatedEmail())
+          ->from(self::FROM_ADDRESS)
+          ->to(new Address('ladovod@gmail.com'))
+          ->subject('Notify user')
+
+          // path of the Twig template to render
+          ->htmlTemplate('notify/notify.html.twig')
+
+          // pass variables (name => value) to the template
+          ->context([
+            'expiration_date' => new \DateTime('+7 days'),
+            'user' => $user
+          ]);
+        $this->mailer->send($email);
+    }
 }

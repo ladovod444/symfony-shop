@@ -45,6 +45,7 @@ class UserCrudController extends AbstractCrudController
             ])->setDisabled(),
             //BooleanField::new('enabled')->onlyOnIndex(),
             BooleanField::new('enabled'),
+            BooleanField::new('isVerified'),
             TextField::new('confirmation_code'),
         ];
     }

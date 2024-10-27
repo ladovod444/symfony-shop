@@ -41,12 +41,12 @@ class ProductCrudController extends AbstractCrudController
           ->setLabel('Image');
         // ->onlyOnIndex();
         // https://symfony.com/doc/4.x/EasyAdminBundle/fields/AssociationField.html
-        yield AssociationField::new('user_id')
-          ->setQueryBuilder(fn () => $this->userRepository->createQueryBuilder('user')
-//            ->where('entity.some_property = :some_value')
-//            ->setParameter('some_value', '...')
-              ->orderBy('user.email', 'ASC')
-          ); // ->renderAsHtml();
+//        yield AssociationField::new('user_id')
+//          ->setQueryBuilder(fn () => $this->userRepository->createQueryBuilder('user')
+////            ->where('entity.some_property = :some_value')
+////            ->setParameter('some_value', '...')
+//              ->orderBy('user.email', 'ASC')
+//          ); // ->renderAsHtml();
         $createdAt = DateTimeField::new('createdAt')->setFormTypeOptions([
             'years' => range((int) date('Y'), (int) date('Y') + 5),
             'widget' => 'single_text',

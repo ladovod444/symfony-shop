@@ -66,7 +66,7 @@ class ProductImport
           ->setCurrentPrice($product_data['price']['finalPrice'])
           ->setRegularPrice($product_data['price']['regularPrice'])
           ->setSku($product_data['mainId'])
-          ->setUserId($user);
+          ->setUser($user);
         $this->entityManager->persist($product);
 
         // Отправить json сообщение, c id и урлом изображения.
@@ -76,6 +76,8 @@ class ProductImport
                 'product_image' => $product_data['displayAssets'][0]['url'],
             ]
         );
+
+        //$message = "test mess " . $product->getId();
 
         $this->bus->dispatch(ProductImageMessage::create($message));
         // $this->bus->dispatch(ProductImageMessage::create($product->getId()));
