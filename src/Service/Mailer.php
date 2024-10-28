@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Order;
 use App\Entity\User;
 //use Swift_Mailer;
 //use Swift_Message;
@@ -26,11 +27,10 @@ class Mailer
     //private $twig;
 
     public function __construct(
-       //private Swift_Mailer $mailer,
-       private MailerInterface $mailer,
-       //private Environment $twig
-
-    )  {
+        //private Swift_Mailer $mailer,
+        private MailerInterface $mailer,
+        //private Environment $twig
+    ) {
 
     }
 
@@ -57,21 +57,22 @@ class Mailer
             ]);
         //$this->mailer->
         $this->mailer->send($email);
-//        $messageBody = $this->twig->render('security/confirmation.html.twig', [
-//            'user' => $user
-//        ]);
-//
-//        $message = new Swift_Message();
-//        $message
-//            ->setSubject('Вы успешно прошли регистрацию!')
-//            ->setFrom(self::FROM_ADDRESS)
-//            ->setTo($user->getEmail())
-//            ->setBody($messageBody, 'text/html');
-//
-//        return $this->mailer->send($message);
+        //        $messageBody = $this->twig->render('security/confirmation.html.twig', [
+        //            'user' => $user
+        //        ]);
+        //
+        //        $message = new Swift_Message();
+        //        $message
+        //            ->setSubject('Вы успешно прошли регистрацию!')
+        //            ->setFrom(self::FROM_ADDRESS)
+        //            ->setTo($user->getEmail())
+        //            ->setBody($messageBody, 'text/html');
+        //
+        //        return $this->mailer->send($message);
     }
 
-    public function sendContactsMessage($email_data) {
+    public function sendContactsMessage($email_data)
+    {
         $email = (new TemplatedEmail())
             ->from(self::FROM_ADDRESS)
             ->to(new Address('ladovod@gmail.com'))
@@ -88,7 +89,8 @@ class Mailer
         $this->mailer->send($email);
     }
 
-    public function notifyUserMessage(User $user) {
+    public function notifyUserMessage(User $user)
+    {
         $email = (new TemplatedEmail())
           ->from(self::FROM_ADDRESS)
           ->to(new Address('ladovod@gmail.com'))
@@ -101,6 +103,24 @@ class Mailer
           ->context([
             'expiration_date' => new \DateTime('+7 days'),
             'user' => $user
+          ]);
+        $this->mailer->send($email);
+    }
+
+    public function notifyOrderMessage(Order $order)
+    {
+        $email = (new TemplatedEmail())
+          ->from(self::FROM_ADDRESS)
+          ->to(new Address('ladovod@gmail.com'))
+          ->subject('Order Notify')
+
+          // path of the Twig template to render
+          ->htmlTemplate('notify/notify-order.html.twig')
+
+          // pass variables (name => value) to the template
+          ->context([
+            'expiration_date' => new \DateTime('+7 days'),
+            'order' => $order
           ]);
         $this->mailer->send($email);
     }

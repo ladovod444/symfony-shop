@@ -23,6 +23,11 @@ when@dev:
                 path: "%kernel.logs_dir%/import-%kernel.environment%.log"
                 level: debug
                 channels: [ "import" ]
+            order:
+                type: stream
+                path: "%kernel.logs_dir%/order-%kernel.environment%.log"
+                level: debug
+                channels: [ "order" ]
             console:
                 type: console
                 process_psr_3_messages: false
