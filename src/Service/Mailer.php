@@ -30,6 +30,8 @@ class Mailer
         //private Swift_Mailer $mailer,
         private MailerInterface $mailer,
         //private Environment $twig
+        private string $email_from,
+        private string $email_to,
     ) {
 
     }
@@ -43,7 +45,7 @@ class Mailer
     {
         //dd($user);
         $email = (new TemplatedEmail())
-            ->from(self::FROM_ADDRESS)
+            ->from($this->email_from)
             ->to(new Address($user->getEmail()))
             ->subject('Thanks for signing up!')
 
@@ -74,8 +76,8 @@ class Mailer
     public function sendContactsMessage($email_data)
     {
         $email = (new TemplatedEmail())
-            ->from(self::FROM_ADDRESS)
-            ->to(new Address('ladovod@gmail.com'))
+            ->from($this->email_from)
+            ->to(new Address($this->email_to))
             ->subject('Contacts form')
 
             // path of the Twig template to render
@@ -93,7 +95,7 @@ class Mailer
     {
         $email = (new TemplatedEmail())
           ->from(self::FROM_ADDRESS)
-          ->to(new Address('ladovod@gmail.com'))
+          ->to(new Address($this->email_to))
           ->subject('Notify user')
 
           // path of the Twig template to render
@@ -111,7 +113,7 @@ class Mailer
     {
         $email = (new TemplatedEmail())
           ->from(self::FROM_ADDRESS)
-          ->to(new Address('ladovod@gmail.com'))
+          ->to(new Address($this->email_to))
           ->subject('Order Notify')
 
           // path of the Twig template to render
