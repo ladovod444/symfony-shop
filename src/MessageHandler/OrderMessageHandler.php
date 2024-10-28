@@ -21,6 +21,12 @@ class OrderMessageHandler
     ) {
     }
 
+    /**
+     * @param \App\Message\OrderMessage $orderMessage
+     *
+     * @return void
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
     public function __invoke(OrderMessage $orderMessage): void
     {
         $order_data = $orderMessage->getContent();

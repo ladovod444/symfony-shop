@@ -18,6 +18,12 @@ class ProductImageMessageHandler
     ) {
     }
 
+    /**
+     * @param \App\Message\ProductImageMessage $productImageMessage
+     *
+     * @return void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function __invoke(ProductImageMessage $productImageMessage): void
     {
         $product_data = $productImageMessage->getContent();

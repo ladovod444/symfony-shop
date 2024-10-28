@@ -41,7 +41,7 @@ class Mailer
      *
      * @throws TransportExceptionInterface
      */
-    public function sendConfirmationMessage(User $user)
+    public function sendConfirmationMessage(User $user): void
     {
         //dd($user);
         $email = (new TemplatedEmail())
@@ -73,7 +73,13 @@ class Mailer
         //        return $this->mailer->send($message);
     }
 
-    public function sendContactsMessage($email_data)
+    /**
+     * @param $email_data
+     *
+     * @return void
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
+    public function sendContactsMessage($email_data): void
     {
         $email = (new TemplatedEmail())
             ->from($this->email_from)
@@ -91,7 +97,13 @@ class Mailer
         $this->mailer->send($email);
     }
 
-    public function notifyUserMessage(User $user)
+    /**
+     * @param \App\Entity\User $user
+     *
+     * @return void
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
+    public function notifyUserMessage(User $user): void
     {
         $email = (new TemplatedEmail())
           ->from(self::FROM_ADDRESS)
@@ -109,7 +121,13 @@ class Mailer
         $this->mailer->send($email);
     }
 
-    public function notifyOrderMessage(Order $order)
+    /**
+     * @param \App\Entity\Order $order
+     *
+     * @return void
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
+    public function notifyOrderMessage(Order $order): void
     {
         $email = (new TemplatedEmail())
           ->from(self::FROM_ADDRESS)
