@@ -21,7 +21,7 @@ class HttpClient
         ]);
 
         $response = $client->get($url);
-
+        //file_put_contents("text.txt", $response->getBody()->getContents());
         return $response->getBody()->getContents();
     }
 }

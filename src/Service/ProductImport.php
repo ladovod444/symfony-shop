@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Product;
-use App\Message\ProductImageMessage;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -15,13 +14,15 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[WithMonologChannel('import')]
 class ProductImport
 {
-    public function __construct(private readonly HttpClient $httpClient,
+    public function __construct(
+        private readonly HttpClient $httpClient,
         private string $fortnite_api_url,
         private string $fortnite_api_key,
         private EntityManagerInterface $entityManager,
         private UserRepository $userRepository,
         private LoggerInterface $logger,
         private readonly MessageBusInterface $bus,
+        private readonly ProductsBus $productsBus,
         private readonly ParameterBagInterface $parameterBag,
     ) {
     }
@@ -82,7 +83,9 @@ class ProductImport
 
         //$message = "test mess " . $product->getId();
 
-        $this->bus->dispatch(ProductImageMessage::create($message));
+        ////$this->bus->dispatch(ProductImageMessage::create($message));
+        ///
+        $this->productsBus->execute($message);
         // $this->bus->dispatch(ProductImageMessage::create($product->getId()));
         $this->logger->info('Creating product '.$product->getTitle());
     }
