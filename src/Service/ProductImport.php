@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[WithMonologChannel('import')]
@@ -21,6 +22,7 @@ class ProductImport
         private UserRepository $userRepository,
         private LoggerInterface $logger,
         private readonly MessageBusInterface $bus,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -58,7 +60,8 @@ class ProductImport
 
     public function createProduct(array $product_data): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'ladovod@gmail.com']);
+       // $user = $this->userRepository->findOneBy(['email' => 'ladovod@gmail.com']);
+        $user = $this->userRepository->find($this->parameterBag->get('app:import_product_author'));
 
         $product = new Product();
         $product->setTitle($product_data['displayName'])
