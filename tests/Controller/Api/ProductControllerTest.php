@@ -11,11 +11,9 @@ use Helmich\JsonAssert\JsonAssertions;
 
 class ProductControllerTest extends WebTestCase
 {
-
     use ResetDatabase;
     use Factories;
     use JsonAssertions;
-
 
     public function testIndex(): void
     {
@@ -61,9 +59,8 @@ class ProductControllerTest extends WebTestCase
         $client->loginUser($user->_real());
 
         // Создадим тестовый товар
-        ProductFactory::createOne();
-        // Получим его
-        $entity = ProductFactory::first();
+        $entity = ProductFactory::createOne();
+        
         $title = $entity->getTitle();
         $current_price = $entity->getCurrentPrice();
         $description = $entity->getDescription();
@@ -132,10 +129,8 @@ class ProductControllerTest extends WebTestCase
         $client->loginUser($user->_real());
 
         // Создадим тестовый товар
-        ProductFactory::createOne();
-        // Получим его
-        $entity = ProductFactory::first();
-
+        $entity = ProductFactory::createOne();
+        
         // Подготовим содержимое
         $body = '{
             "title": "Updated Halloween Town Meeting",
@@ -175,10 +170,8 @@ class ProductControllerTest extends WebTestCase
         $client->loginUser($user->_real());
 
         // Создадим тестовый товар
-        ProductFactory::createOne();
-        // Получим его
-        $entity = ProductFactory::first();
-
+        $entity = ProductFactory::createOne();
+        
         // Подготовим запрос
         $client->request(
             'DELETE',

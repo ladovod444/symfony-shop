@@ -62,8 +62,7 @@ class OrderControllerTest extends WebTestCase
         }';
 
         // Создаем OrderItems
-        OrderFactory::createOne();
-        $order = OrderFactory::first();
+        $order = OrderFactory::createOne();
         OrderItemFactory::createMany(3, ['ord' => $order]);
         $order_items = OrderItemFactory::all();
 
@@ -105,8 +104,7 @@ class OrderControllerTest extends WebTestCase
         $user = UserFactory::createOne();
         $client->loginUser($user->_real());
 
-        OrderFactory::createOne();
-        $order = OrderFactory::first();
+        $order = OrderFactory::createOne();
 
         $client->request('DELETE', '/api/v1/order/' . $order->getId());
 
