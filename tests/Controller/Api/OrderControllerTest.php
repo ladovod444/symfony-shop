@@ -88,16 +88,29 @@ class OrderControllerTest extends WebTestCase
         $json_content = json_encode($content);
 
         $client->request(
-          'POST',
-          '/api/v1/order/create-order',
-          server: ['CONTENT_TYPE' => 'application/json'],
-          content: $json_content
+            'POST',
+            '/api/v1/order/create-order',
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: $json_content
         );
-
         $json = json_decode($client->getResponse()->getContent(), true);
 
         // Проверим, что запрос отдает 201 (created)
         $this->assertEquals(201, $client->getResponse()->getStatusCode());
+    }
+
+    public function testDelete()
+    {
+        $client = static::createClient();
+        $user = UserFactory::createOne();
+        $client->loginUser($user->_real());
+
+        OrderFactory::createOne();
+        $order = OrderFactory::first();
+
+        $client->request('DELETE', '/api/v1/order/' . $order->getId());
+
+        $this->assertEquals(204, $client->getResponse()->getStatusCode());
     }
 
 }

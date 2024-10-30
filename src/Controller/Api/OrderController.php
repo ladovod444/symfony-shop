@@ -180,7 +180,7 @@ class OrderController extends AbstractController
     }
     */
 
-    #[Route('/api/order/{order}', name: 'api-order-delete', methods: ['delete'], format: 'json')]
+    #[Route('/order/{order}', name: 'api-order-delete', methods: ['delete'], format: 'json')]
     #[OA\Response(
         response: 204,
         description: 'Delete order item',
