@@ -4,6 +4,7 @@ namespace App\Tests\Controller\Api;
 
 use App\Factory\UserFactory;
 use App\Factory\ProductFactory;
+use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -171,13 +172,16 @@ class ProductControllerTest extends WebTestCase
 
         // Создадим тестовый товар
         $entity = ProductFactory::createOne();
-        
+        $product_id = $entity->getId();
         // Подготовим запрос
         $client->request(
             'DELETE',
-            '/api/v1/product/' . $entity->getId(),
+            '/api/v1/product/' . $product_id,
             server: ['CONTENT_TYPE' => 'application/json'],
         );
+
+        $productRepository = static::getContainer()->get(ProductRepository::class);
+        self::assertNull($productRepository->find($product_id));
 
         // Проверим, что запрос отдает 204 - no content
         $this->assertEquals(204, $client->getResponse()->getStatusCode());
