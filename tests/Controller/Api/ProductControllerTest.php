@@ -16,6 +16,7 @@ class ProductControllerTest extends WebTestCase
     use Factories;
     use JsonAssertions;
 
+
     public function testIndex(): void
     {
         $client = static::createClient();
@@ -25,6 +26,7 @@ class ProductControllerTest extends WebTestCase
         // Создадим тестовые товары
         ProductFactory::createMany(10, ['user' => $user]);
 
+        // Подготовим запрос
         $client->request('GET', '/api/v1/product/list');
 
         // Авторизация не нужна, используется $client->loginUser

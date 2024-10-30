@@ -11,7 +11,7 @@ class CodeGenerator
     /**
      * @return string
      */
-    public function getConfirmationCode()
+    public function getConfirmationCode(): string
     {
         $stringLength = strlen(self::RANDOM_STRING);
         $code = '';

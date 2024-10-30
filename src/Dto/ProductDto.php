@@ -17,7 +17,8 @@ class ProductDto
         #[Assert\NotBlank]
         public readonly ?string $regular_price,
         #[Assert\NotBlank]
-        public readonly ?string $image)
+        public readonly ?string $image
+    )
     {
     }
 }

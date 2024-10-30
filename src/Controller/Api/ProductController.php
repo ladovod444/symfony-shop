@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 #[OA\Tag(name: "Products api")]
@@ -150,8 +151,10 @@ class ProductController extends AbstractController
         description: 'Delete product',
 //        content:  new Model(type: ProductDto::class)
     )]
+    #[IsGranted('PRODUCT_DELETE', 'product')]
     public function delete(Product $product): Response
     {
+        //dd($product);
         $this->entityManager->remove($product);
         $this->entityManager->flush();
 
