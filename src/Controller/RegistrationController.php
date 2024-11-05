@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\RegisteredUserEvent;
 use App\Form\RegistrationFormType;
 use App\Service\CodeGenerator;
 use App\Service\Mailer;
+use Composer\EventDispatcher\EventDispatcher;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +28,8 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface      $entityManager,
         CodeGenerator               $codeGenerator,
-        Mailer                      $mailer
+        Mailer                      $mailer,
+      EventDispatcherInterface     $eventDispatcher
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -45,7 +49,10 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
 
             // Send mail
-            $mailer->sendConfirmationMessage($user);
+            //$mailer->sendConfirmationMessage($user);
+            
+            $registerUserEvent = new RegisteredUserEvent($user);
+            $eventDispatcher->dispatch($registerUserEvent, RegisteredUserEvent::NAME);
 
             // do anything else you need here, like send an email
             $this->addFlash('success', 'You have been registered!');
