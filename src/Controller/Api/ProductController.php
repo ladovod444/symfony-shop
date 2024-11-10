@@ -151,7 +151,7 @@ class ProductController extends AbstractController
         description: 'Delete product',
 //        content:  new Model(type: ProductDto::class)
     )]
-    #[IsGranted('PRODUCT_DELETE', 'product')]
+//    #[IsGranted('PRODUCT_DELETE', 'product')]
     public function delete(Product $product): Response
     {
         //dd($product);

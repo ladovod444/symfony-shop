@@ -22,7 +22,7 @@ class ContactsType extends AbstractType
         $builder
             ->add('title', null, [
                 'label' => 'Enter subject',
-            ])
+            ])//->setRequired(false)
             ->add('body', TextareaType::class)
             ->add('email', EmailType::class);
         $builder->setAction('/contacts');
