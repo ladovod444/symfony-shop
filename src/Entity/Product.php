@@ -51,6 +51,9 @@ class Product
     #[Groups(['products:api:list', 'user_order:api:list', 'order:api:list'])]
     private ?string $title = null;
 
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    private ?Category $category = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -175,5 +178,17 @@ class Product
     public function __toString(): string
     {
         return $this->getTitle() ?? '';
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
+
+        return $this;
     }
 }
