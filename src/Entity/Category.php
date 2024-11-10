@@ -2,10 +2,15 @@
 
 namespace App\Entity;
 
+use App\Dto\CategoryDto;
+use App\Dto\ProductDto;
 use App\Repository\CategoryRepository;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -16,15 +21,18 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['products:api:list'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['products:api:list'])]
     private ?string $slug = null;
 
     /**
      * @var Collection<int, Product>
      */
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
+    #[Groups(['products:api:list'])]
     private Collection $products;
 
     public function __construct()
@@ -89,5 +97,21 @@ class Category
         }
 
         return $this;
+    }
+
+    public static function createFromDto(CategoryDto $categoryDto): static
+    {
+        $category = new self();
+        $category->setTitle($categoryDto->title)
+          ->setSlug($categoryDto->slug);
+
+        return $category;
+    }
+
+    public static function updateFromDto(CategoryDto $categoryDto, Category $category): static
+    {
+        $category->setTitle($categoryDto->title)
+          ->setSlug($categoryDto->slug);
+        return $category;
     }
 }
