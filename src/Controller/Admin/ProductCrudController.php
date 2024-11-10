@@ -39,6 +39,7 @@ class ProductCrudController extends AbstractCrudController
           ->setBasePath('/uploads/images')
           ->setUploadDir('public/uploads/images')
           ->setLabel('Image');
+        yield AssociationField::new('category')->autocomplete();
         // ->onlyOnIndex();
         // https://symfony.com/doc/4.x/EasyAdminBundle/fields/AssociationField.html
 //        yield AssociationField::new('user_id')

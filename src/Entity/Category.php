@@ -114,4 +114,8 @@ class Category
           ->setSlug($categoryDto->slug);
         return $category;
     }
+
+    public function __toString(){
+        return $this->title;
+    }
 }

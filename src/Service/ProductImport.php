@@ -2,7 +2,9 @@
 
 namespace App\Service;
 
+use App\Entity\Category;
 use App\Entity\Product;
+use App\Repository\CategoryRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -14,6 +16,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[WithMonologChannel('import')]
 class ProductImport
 {
+
     public function __construct(
         private readonly HttpClient $httpClient,
         private string $fortnite_api_url,
@@ -24,6 +27,7 @@ class ProductImport
         private readonly MessageBusInterface $bus,
         private readonly ProductsBus $productsBus,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly CategoryRepository $categoryRepository
     ) {
     }
 
@@ -32,7 +36,10 @@ class ProductImport
      */
     public function import($count): void
     {
-        $products_data = $this->httpClient->get($this->fortnite_api_url, $this->fortnite_api_key);
+        $products_data = $this->httpClient->get(
+            $this->fortnite_api_url,
+            $this->fortnite_api_key
+        );
 
         $products = json_decode($products_data, true);
         $products = $products['shop'];
@@ -46,7 +53,8 @@ class ProductImport
             ++$data_count;
             if (($data_count % $batchSize) === 0) {
                 $this->entityManager->flush();
-                $this->entityManager->clear(); // Detaches all objects from Doctrine!
+                $this->entityManager->clear(
+                ); // Detaches all objects from Doctrine!
             }
 
             // Если задано кол-во.
@@ -54,15 +62,18 @@ class ProductImport
                 break;
             }
         }
-        $this->entityManager->flush(); // Persist objects that did not make up an entire batch
+        $this->entityManager->flush(
+        ); // Persist objects that did not make up an entire batch
         $this->entityManager->clear();
         $this->logger->info('Finish importing products');
     }
 
     public function createProduct(array $product_data): void
     {
-       // $user = $this->userRepository->findOneBy(['email' => 'ladovod@gmail.com']);
-        $user = $this->userRepository->find($this->parameterBag->get('app:import_product_author'));
+        // $user = $this->userRepository->findOneBy(['email' => 'ladovod@gmail.com']);
+        $user = $this->userRepository->find(
+            $this->parameterBag->get('app:import_product_author')
+        );
 
         $product = new Product();
         $product->setTitle($product_data['displayName'])
@@ -71,14 +82,16 @@ class ProductImport
           ->setRegularPrice($product_data['price']['regularPrice'])
           ->setSku($product_data['mainId'])
           ->setUser($user);
+        $category = $this->randomCategory();
+        $product->setCategory($category);
         $this->entityManager->persist($product);
 
         // Отправить json сообщение, c id и урлом изображения.
         $message = json_encode(
             [
-                'product_id' => $product->getId(),
-                'product_image' => $product_data['displayAssets'][0]['url'],
-            ]
+            'product_id' => $product->getId(),
+            'product_image' => $product_data['displayAssets'][0]['url'],
+          ]
         );
 
         //$message = "test mess " . $product->getId();
@@ -89,4 +102,20 @@ class ProductImport
         // $this->bus->dispatch(ProductImageMessage::create($product->getId()));
         $this->logger->info('Creating product '.$product->getTitle());
     }
+
+    /**
+     * Adds Random category during import.
+     *
+     * @return \App\Entity\Category
+     */
+    private function randomCategory(): Category
+    {
+        $categories = $this->categoryRepository->findAll();
+
+        $category_count = count($categories);
+        $rand = mt_rand(0, $category_count - 1);
+
+        return $categories[$rand];
+    }
+
 }
