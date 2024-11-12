@@ -3,7 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Product;
-use App\Entity\User;
 use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;

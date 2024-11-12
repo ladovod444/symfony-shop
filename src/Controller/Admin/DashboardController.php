@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Category;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\User;
@@ -52,6 +53,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'app_default');
         yield MenuItem::linkToCrud('Users', 'fas fa-map-marker-alt', User::class);
         yield MenuItem::linkToCrud('Products', 'fas fa-comments', Product::class);
+        yield MenuItem::linkToCrud('Categories', 'fas fa-comments', Category::class);
         yield MenuItem::linkToCrud('Orders', 'fas fa-comments', Order::class);
     }
 }

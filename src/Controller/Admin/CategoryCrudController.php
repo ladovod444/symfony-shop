@@ -3,9 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class CategoryCrudController extends AbstractCrudController
@@ -15,14 +18,33 @@ class CategoryCrudController extends AbstractCrudController
         return Category::class;
     }
 
-    /*
+    public function configureActions(\EasyCorp\Bundle\EasyAdminBundle\Config\Actions $actions): Actions
+    {
+
+        return parent::configureActions($actions)
+          ->add(Crud::PAGE_INDEX, Action::DETAIL)
+          //->add(Crud::PAGE_INDEX, $impersonate)
+          ;
+    }
+
+
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
-        ];
+        yield IntegerField::new('id');
+        yield TextField::new('title');
+
+        $products = CollectionField::new('products')
+          //->renderExpanded()
+//          ->useEntryCrudForm(ProductCrudController::class)
+//          ->setEntryIsComplex()
+        ;
+
+        if (Crud::PAGE_EDIT === $pageName) {
+            yield $products;
+        }
+        else {
+            yield $products;
+        }
     }
-    */
+
 }
