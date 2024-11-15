@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Dto\UserDto;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,6 +20,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -96,7 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -149,7 +151,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __toString(): string
     {
-        return (string) $this->getEmail();
+        return (string)$this->getEmail();
     }
 
     /**
@@ -206,6 +208,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public static function createFromDto(
+        UserDto $userDto,
+        UserRepository $userRepository,
+        $userPasswordHasher
+    ): static {
+//        if ($user === null) {
+//            $user = $userRepository->findOneBy(['id'=> 1]);
+//        }
 
+        $user = new self();
+        $user->setEmail($userDto->email);
+
+        $plainPassword = $userDto->password;
+        //dd($plainPassword);
+        // encode the plain password
+        $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+        $user->setEnabled(true);
+        // Set confirmation code
+        //$user->setConfirmationCode($codeGenerator->getConfirmationCode());
+
+        return $user;
+    }
+
+    public static function updateFromDto(
+        UserDto $userDto,
+        User $user,
+        $userPasswordHasher
+    ): static {
+
+        $user->setEmail($userDto->email);
+
+        $plainPassword = $userDto->password;
+        // encode the plain password
+        $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+        $user->setEnabled(true);
+
+        return $user;
+    }
 
 }

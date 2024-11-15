@@ -30,8 +30,9 @@ class CategoryCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IntegerField::new('id');
+//        yield IntegerField::new('id');
         yield TextField::new('title');
+        yield TextField::new('slug');
 
         $products = CollectionField::new('products')
           //->renderExpanded()
