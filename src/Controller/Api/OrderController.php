@@ -5,15 +5,18 @@ namespace App\Controller\Api;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\User;
+use App\Event\RegisteredUserEvent;
 use App\Repository\OrderItemRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Security;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
@@ -30,6 +33,8 @@ class OrderController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository         $userRepository,
         private readonly OrderRepository        $orderRepository,
+        private UserPasswordHasherInterface $userPasswordHasher,
+        private EventDispatcherInterface     $eventDispatcher
     ) {
 
     }
@@ -105,6 +110,23 @@ class OrderController extends AbstractController
 
         $order = new Order();
         $user = $this->userRepository->findOneBy(['email' => $payload['mail']]);
+        // Если нет user, то нужно создать
+        if (!$user) {
+            $user = new User();
+            $user->setEmail($payload['mail']);
+
+            $plainPassword = 'test';
+            // encode the plain password
+            $user->setPassword($this->userPasswordHasher->hashPassword($user, $plainPassword));
+
+            // @todo продумать отправку email вновь соазданному юзеру
+//            $registerUserEvent = new RegisteredUserEvent($user);
+//            $this->eventDispatcher->dispatch($registerUserEvent, RegisteredUserEvent::NAME);
+            //$user->setEnabled(true);
+
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
         $order->setOwner($user);
         $this->entityManager->persist($order);
 

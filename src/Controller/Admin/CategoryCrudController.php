@@ -41,9 +41,11 @@ class CategoryCrudController extends AbstractCrudController
         ;
 
         if (Crud::PAGE_EDIT === $pageName) {
-            yield $products;
+
+            //yield $products;
         }
         else {
+            yield IntegerField::new('id');
             yield $products;
         }
     }
