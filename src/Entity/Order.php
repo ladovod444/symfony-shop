@@ -35,6 +35,7 @@ class Order
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $status = null;
 
+
     public function __construct()
     {
         $this->orderItems = new ArrayCollection();
@@ -87,6 +88,7 @@ class Order
         return $this;
     }
 
+    #[Groups(['order:api:list'])]
     public function getStatus(): ?string
     {
         return $this->status;
@@ -99,5 +101,21 @@ class Order
         return $this;
     }
 
+    #[Groups(['order:api:list'])]
+    public function getCreated(): int
+    {
+        return $this->createdAt->getTimestamp();
+    }
+
+    #[Groups(['order:api:list'])]
+    public function getTotalSum(): float
+    {
+        $sum = 0;
+        foreach ($this->orderItems as $orderItem) {
+            $sum += $orderItem->getProduct()->getCurrentPrice() * $orderItem->getQuantity();
+        }
+
+        return $sum;
+    }
 
 }
