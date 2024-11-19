@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 #[OA\Tag(name: "Products api")]
 #[Route('/api/v1')]
 #[Security(name: "Bearer")]
@@ -79,7 +80,7 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/category/{category}', name: 'api-category', methods: ['GET'], format: 'json')]
+    #[Route('/category/{slug}', name: 'api-category', methods: ['GET'], format: 'json')]
     #[OA\Parameter(
         name: "Accept-Language",
         description: "Set language parameter by RFC2616 <https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4>",
@@ -90,10 +91,10 @@ class CategoryController extends AbstractController
     )]
     #[OA\Response(
         response: 200,
-        description: 'Returns Category, yes!!!',
+        description: 'Returns a Category',
         content:  new Model(type: CategoryDto::class)
     )]
-    public function getCategory(Category $category): Response
+    public function getCategory(#[MapEntity(mapping: ["slug" => "slug"])] Category $category): Response
     {
         if (null === $category) {
             return $this->json(null, Response::HTTP_NOT_FOUND);
