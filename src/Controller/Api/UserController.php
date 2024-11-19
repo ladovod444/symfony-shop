@@ -11,6 +11,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 #[OA\Tag(name: "Users api")]
@@ -104,6 +107,30 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/user/email/{email}', name: 'api-user-by-email', methods: ['GET'], format: 'json')]
+    #[OA\Parameter(
+        name: "Accept-Language",
+        description: "Set language parameter by RFC2616 <https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4>",
+        in: "header",
+//        OA\Schema(
+//            type="string"
+//        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns User',
+        content:  new Model(type: UserDto::class)
+    )]
+    public function getUserByEmail(#[MapEntity(mapping: ["email" => "email"])]User $user): Response
+    {
+        if (null === $user) {
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        return $this->json($user, Response::HTTP_OK, context: [
+            AbstractNormalizer::GROUPS => ['products:api:list'],
+        ]);
+    }
+
     #[Route('/user/dto', name: 'api-user-add-dto', methods: ['post'], format: 'json')]
     #[OA\Response(
         response: 200,
@@ -159,4 +186,5 @@ class UserController extends AbstractController
 
         return $this->json([], Response::HTTP_NO_CONTENT);
     }
+
 }
