@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -43,8 +44,13 @@ class OrderCrudController extends AbstractCrudController
             'years' => range((int)date('Y'), (int)date('Y') + 5),
             'widget' => 'single_text',
         ]);
-
-        $status = TextField::new('status');
+        
+        $status = ChoiceField::new('status')->setChoices([
+            'created' => 'created',
+            'pending' => 'pending',
+            'canceled' => 'canceled',
+            'completed' => 'completed',
+        ]);
 
         $orderItems = CollectionField::new('orderItems')
             ->useEntryCrudForm(OrderItemCrudController::class)
