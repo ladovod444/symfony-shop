@@ -28,13 +28,13 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 class OrderController extends AbstractController
 {
     public function __construct(
-        private readonly OrderItemRepository    $orderItemRepository,
-        private readonly ProductRepository      $productRepository,
+        private readonly OrderItemRepository $orderItemRepository,
+        private readonly ProductRepository $productRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository         $userRepository,
-        private readonly OrderRepository        $orderRepository,
+        private readonly UserRepository $userRepository,
+        private readonly OrderRepository $orderRepository,
         private UserPasswordHasherInterface $userPasswordHasher,
-        private EventDispatcherInterface     $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher
     ) {
 
     }
@@ -101,8 +101,8 @@ class OrderController extends AbstractController
     #[Route('/order/create-order', name: 'api-order-create-order', methods: ['POST'], format: 'json')]
     #[OA\Response(
         response: 200,
-        description: 'Create an Order',
-        content:  new Model(type: Order::class)
+        description: 'Create an order',
+        content: new Model(type: Order::class)
     )]
     public function createOrder(Request $request): Response
     {
@@ -205,7 +205,7 @@ class OrderController extends AbstractController
     #[Route('/order/{order}', name: 'api-order-delete', methods: ['delete'], format: 'json')]
     #[OA\Response(
         response: 204,
-        description: 'Delete order item',
+        description: 'Delete order',
     )]
     public function delete(Order $order): Response
     {
@@ -213,5 +213,21 @@ class OrderController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/order/change-state/{order}', name: 'api-order-delete', methods: ['patch'], format: 'json')]
+    #[OA\Response(
+        response: 200,
+        description: 'Update order state',
+    )]
+    public function changeState(Order $order, Request $request): Response
+    {
+        $payload = json_decode($request->getContent(), true);
+        $state = $payload['state'];
+
+        $order->setStatus($state);
+        $this->entityManager->flush($order);
+
+        return $this->json($order, Response::HTTP_OK);
     }
 }

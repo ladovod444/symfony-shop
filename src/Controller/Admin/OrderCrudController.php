@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class OrderCrudController extends AbstractCrudController
 {
@@ -43,6 +44,8 @@ class OrderCrudController extends AbstractCrudController
             'widget' => 'single_text',
         ]);
 
+        $status = TextField::new('status');
+
         $orderItems = CollectionField::new('orderItems')
             ->useEntryCrudForm(OrderItemCrudController::class)
             ->setEntryIsComplex();
@@ -52,9 +55,11 @@ class OrderCrudController extends AbstractCrudController
             yield $updatedAt->setFormTypeOption('disabled', true);
 
             yield $orderItems;
+            yield $status;
         } else {
             yield $createdAt;
             yield $updatedAt;
+            yield $status;
         }
 
     }
