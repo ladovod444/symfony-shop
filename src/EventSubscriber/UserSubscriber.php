@@ -4,10 +4,14 @@ namespace App\EventSubscriber;
 
 use App\Event\RegisteredUserEvent;
 use App\Service\Mailer;
+use Composer\Util\Http\Response;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Twig_Error_Loader;
 use Twig_Error_Runtime;
 use Twig_Error_Syntax;
+use Lexik\Bundle\JWTAuthenticationBundle\Events;
 
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -30,7 +34,8 @@ class UserSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-          RegisteredUserEvent::NAME => 'onUserRegister'
+          RegisteredUserEvent::NAME => 'onUserRegister',
+            Events::AUTHENTICATION_SUCCESS => 'onAuthenticationSuccess',
         ];
     }
 
@@ -44,5 +49,25 @@ class UserSubscriber implements EventSubscriberInterface
     public function onUserRegister(RegisteredUserEvent $registeredUserEvent): void
     {
         $this->mailer->sendConfirmationMessage($registeredUserEvent->getRegisteredUser());
+    }
+
+    /**
+     * Listen to Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent
+     * to add user id to login response.
+     *
+     * @param AuthenticationSuccessEvent $event
+     * @return void
+     */
+    public function onAuthenticationSuccess(AuthenticationSuccessEvent $event): void
+    {
+
+        $data = $event->getData();
+        if ($data['token']) {
+            $user = $event->getUser();
+            $data['id'] = $user->getId();
+            //$data['username'] = $user->getEmail();
+
+            $event->setData($data);
+        }
     }
 }
