@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Product;
 use App\Repository\CategoryRepository;
 use App\Repository\UserRepository;
+use App\Service\RetailCrm\ProductsRetailcrmBus;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Monolog\Attribute\WithMonologChannel;
@@ -26,6 +27,7 @@ class ProductImport
         private LoggerInterface $logger,
         private readonly MessageBusInterface $bus,
         private readonly ProductsBus $productsBus,
+        private readonly ProductsRetailcrmBus $productsRetailcrmBus,
         private readonly ParameterBagInterface $parameterBag,
         private readonly CategoryRepository $categoryRepository
     ) {
@@ -99,6 +101,16 @@ class ProductImport
         ////$this->bus->dispatch(ProductImageMessage::create($message));
         ///
         $this->productsBus->execute($message);
+
+
+        // Создаем message для последующего создания товара в Retail crm
+        $retailCrmMessage = json_encode(
+            [
+                'product_id' => $product->getId(),
+            ]
+        );
+
+        $this->productsRetailcrmBus->execute($retailCrmMessage);
         // $this->bus->dispatch(ProductImageMessage::create($product->getId()));
         $this->logger->info('Creating product '.$product->getTitle());
     }
