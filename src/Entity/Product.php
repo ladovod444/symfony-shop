@@ -54,6 +54,9 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Category $category = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $retailcrm_id = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -188,6 +191,18 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getRetailcrmId(): ?int
+    {
+        return $this->retailcrm_id;
+    }
+
+    public function setRetailcrmId(?int $retailcrm_id): static
+    {
+        $this->retailcrm_id = $retailcrm_id;
 
         return $this;
     }
