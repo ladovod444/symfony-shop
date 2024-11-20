@@ -30,6 +30,10 @@ services:
         $email_from: '%env(EMAIL_FROM_ADDRESS)%'
         $email_to: '%env(EMAIL_TO_ADDRESS)%'
 
+    App\Service\RetailCrm\ProductManager:
+        $url: '%env(RETAIL_CRM_URL)%'
+        $apiKey: '%env(RETAIL_CRM_API_KEY)%'
+
     app.normalizer.object_normalizer:
         parent: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
         tags: [ "serializer.normalizer" ]
