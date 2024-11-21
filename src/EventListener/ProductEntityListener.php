@@ -9,7 +9,6 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 
-
 #[AsDoctrineListener(event: Events::postFlush, priority: 500, connection: 'default')]
 #[AsDoctrineListener(event: Events::postUpdate, priority: 500, connection: 'default')]
 //#[AsDoctrineListener(event: Events::onFlush, priority: 500, connection: 'default')]
@@ -19,7 +18,7 @@ class ProductEntityListener
     private array $entites = [];
 
     public function __construct(
-        private readonly ProductsRetailcrmBus $productsRetailcrmBus
+        private readonly ProductsRetailcrmBus $productsRetailcrmBus,
     ) {
     }
 

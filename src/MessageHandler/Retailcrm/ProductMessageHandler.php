@@ -5,8 +5,18 @@ namespace App\MessageHandler\Retailcrm;
 use App\Message\Retailcrm\ProductMessage;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use RetailCrm\Api\Exception\Api\AccountDoesNotExistException;
+use RetailCrm\Api\Exception\Api\ApiErrorException;
+use RetailCrm\Api\Exception\Api\MissingCredentialsException;
+use RetailCrm\Api\Exception\Api\MissingParameterException;
+use RetailCrm\Api\Exception\Api\ValidationException;
+use RetailCrm\Api\Exception\Client\HandlerException;
+use RetailCrm\Api\Exception\Client\HttpClientException;
+use RetailCrm\Api\Interfaces\ApiExceptionInterface;
+use RetailCrm\Api\Interfaces\ClientExceptionInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use App\Service\RetailCrm\ProductManager as RetailCrmProduct;
+use App\Service\RetailCrm\OffersManager as RetailCrmOffer;
 
 #[AsMessageHandler]
 class ProductMessageHandler
@@ -14,9 +24,22 @@ class ProductMessageHandler
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ProductRepository $productRepository,
-        private readonly RetailCrmProduct $product
+        private readonly RetailCrmProduct $product,
+        private readonly RetailCrmOffer $offer
     ) {
     }
+
+    /**
+     * @throws ApiErrorException
+     * @throws ClientExceptionInterface
+     * @throws HandlerException
+     * @throws AccountDoesNotExistException
+     * @throws MissingCredentialsException
+     * @throws HttpClientException
+     * @throws ApiExceptionInterface
+     * @throws ValidationException
+     * @throws MissingParameterException
+     */
     public function __invoke(ProductMessage $productMessage): void {
 
         // 0. Получим содержимое сообщения
@@ -49,6 +72,7 @@ class ProductMessageHandler
             // Сделать обновление товара и цены
             $product_data['retailcrm_id'] = $product->getRetailcrmId();
             $this->product->updateProduct($product_data);
+            $this->offer->UpdateOffer($this->productRepository, $product->getRetailcrmId());
         }
         $this->entityManager->flush();
         //$this->entityManager->persist($product);
