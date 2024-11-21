@@ -36,7 +36,7 @@ class OffersManager extends Manager
      * @throws MissingParameterException
      * @throws ValidationException
      */
-    public function UpdateOffer(ProductRepository $productRepository, int $product_id) {
+    public function updateOffer(ProductRepository $productRepository, int $product_id) {
 
         $request = new ProductsRequest();
         $request->filter = new ProductFilterType();
@@ -84,7 +84,7 @@ class OffersManager extends Manager
         }
     }
 
-    public function UpdateOffers(ProductRepository $productRepository, int $count)
+    public function updateOffers(ProductRepository $productRepository, int $count)
     {
 
         // Реквест на получение товаров
