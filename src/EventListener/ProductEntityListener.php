@@ -25,9 +25,8 @@ class ProductEntityListener
 
     public function postFlush(PostFlushEventArgs $args): void
     {
-
         foreach ($this->entites as $entity) {
-            $retailCrmMessage = json_encode(['product_id' => $entity->getId(),]);
+            $retailCrmMessage = json_encode(['product_id' => $entity->getId()]);
             $this->productsRetailcrmBus->execute($retailCrmMessage);
         }
     }
@@ -39,7 +38,6 @@ class ProductEntityListener
             $this->entites[$entity->getId()] = $entity;
             // И далее эти $this->entites можно увидеть в событии postFlush выше по коду
         }
-
     }
 
 }
