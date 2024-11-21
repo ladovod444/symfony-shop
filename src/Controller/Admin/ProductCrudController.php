@@ -28,7 +28,7 @@ class ProductCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IntegerField::new('id');
+        yield IntegerField::new('id')->setDisabled(true);
         yield TextField::new('title');
         yield TextField::new('sku');
         yield TextField::new('current_price');
@@ -39,7 +39,7 @@ class ProductCrudController extends AbstractCrudController
           ->setUploadDir('public/uploads/images')
           ->setLabel('Image');
         yield AssociationField::new('category')->autocomplete();
-        yield IntegerField::new('retailcrm_id');
+        yield IntegerField::new('retailcrm_id')->setDisabled(true);
         // ->onlyOnIndex();
         // https://symfony.com/doc/4.x/EasyAdminBundle/fields/AssociationField.html
 //        yield AssociationField::new('user_id')

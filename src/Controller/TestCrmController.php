@@ -22,6 +22,7 @@ use RetailCrm\Api\Model\Request\Store\OffersRequest;
 use RetailCrm\Api\Model\Request\Store\PricesUploadRequest;
 use RetailCrm\Api\Model\Request\Store\ProductsBatchCreateRequest;
 use RetailCrm\Api\Model\Request\Store\ProductsRequest;
+use RetailCrm\Api\Model\Response\References\PriceTypesResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -276,6 +277,24 @@ class TestCrmController extends AbstractController
 
         $data = $this->product->createProducts($product_data);
         //dd($data);
+    }
+
+    #[Route('/test/crm-get-prices-types', name: 'app_test_crm_prices_types')]
+    public function getPrices(): Response
+    {
+        $client = SimpleClientFactory::createClient('https://ladovod.retailcrm.ru', 'XQeQMSyPu4Z55O6S2wnnt6MODXaYF3ZH');
+        //$request = new PriceTypesResponse();
+
+//        $request->filter = new OfferFilterType();
+//        $request->filter->name = "testName";
+        //$request->filter->ids[] = 77;
+
+
+
+        $response = $client->references->priceTypes();
+
+        dd($response);
+
     }
 
 }

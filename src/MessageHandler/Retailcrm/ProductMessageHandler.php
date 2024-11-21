@@ -28,6 +28,7 @@ class ProductMessageHandler
         $productId = (int) $productData['product_id'];
         $product = $this->productRepository->find($productId);
 
+
         $product_data = [
             'id' => $product->getId(),
             'name' => $product->getTitle(),
@@ -35,11 +36,20 @@ class ProductMessageHandler
             'groupName' => $product->getCategory()->getSlug(),
         ];
 
-        // 2. Создать его в retailCRM, получить id из retailCRM
-        $data = $this->product->createProducts($product_data);
+        // Если создание товара
+        if (isset($productData['is_new'])) {
+            // 2. Создать его в retailCRM, получить id из retailCRM
+            $data = $this->product->createProducts($product_data);
 
-        // Сохранить retailcrm_id для Product
-        $product->setRetailcrmId($data[0]);
+            // Сохранить retailcrm_id для Product
+            $product->setRetailcrmId($data[0]);
+        }
+
+        else {
+            // Сделать обновление товара и цены
+            $product_data['retailcrm_id'] = $product->getRetailcrmId();
+            $this->product->updateProduct($product_data);
+        }
         $this->entityManager->flush();
         //$this->entityManager->persist($product);
 

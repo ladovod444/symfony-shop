@@ -2,6 +2,7 @@
 
 namespace App\Service\RetailCrm;
 
+use Monolog\Attribute\WithMonologChannel;
 use RetailCrm\Api\Client;
 use RetailCrm\Api\Enum\Product\ProductType;
 use RetailCrm\Api\Factory\SimpleClientFactory;
@@ -9,30 +10,19 @@ use RetailCrm\Api\Interfaces\ApiExceptionInterface;
 use RetailCrm\Api\Interfaces\ClientExceptionInterface;
 use RetailCrm\Api\Model\Entity\Store\ProductCreateInput;
 use RetailCrm\Api\Model\Entity\Store\ProductEditGroupInput;
+use RetailCrm\Api\Model\Entity\Store\ProductEditInput;
 use RetailCrm\Api\Model\Filter\Store\OfferFilterType;
 use RetailCrm\Api\Model\Request\Store\OffersRequest;
+use RetailCrm\Api\Model\Request\Store\ProductBatchEditRequest;
 use RetailCrm\Api\Model\Request\Store\ProductsBatchCreateRequest;
 use RetailCrm\Api\Model\Request\Store\ProductsRequest;
 use RetailCrm\Api\Model\Response\Store\OffersResponse;
 
-class ProductManager
+#[WithMonologChannel('retailcrm')]
+class ProductManager extends Manager
 {
-    const CATALOG_ID = 2;
+    use Helper;
 
-    private Client $client;
-
-    private $catalogMap = [
-        'wallets' => 21,
-        'nessesers' => 22,
-        'covers' => 23,
-    ];
-
-    public function __construct(private string $url, public string $apiKey)
-    {
-        // .env
-        // В services
-        $this->client = SimpleClientFactory::createClient($this->url, $this->apiKey);
-    }
 
     public function getOffers(): OffersResponse|string
     {
@@ -92,6 +82,7 @@ class ProductManager
         $productInput->groups[] = $productEditGroupInput;
 
         try {
+            $this->logger->info(sprintf('Created product %s', $productInput->name));
             $response = $this->client->store->productsBatchCreate(new ProductsBatchCreateRequest([$productInput]));
 
             return $response->addedProducts;
@@ -109,4 +100,35 @@ class ProductManager
             exit(-1);
         }
     }
+
+    /**
+     * @param $products_data
+     * @return void
+     *
+     */
+    public function updateProduct($products_data): void {
+        $productInput = new ProductEditInput();
+        $productInput->name = $products_data['name'];
+        $productInput->description = $products_data['description'];
+        $productInput->active = true;
+        $productInput->id = $products_data['retailcrm_id'];
+
+        try {
+            $response = $this->client->store->productBatchEdit(new ProductBatchEditRequest([$productInput]));
+            $this->logger->info(sprintf('Updated product %s', $productInput->name));
+        } catch (ApiExceptionInterface $exception) {
+            // @todo добавить в лог
+            echo sprintf(
+                'Error from RetailCRM API (status code: %d): %s %s',
+                $exception->getStatusCode(),
+                $exception->getMessage(),
+                $exception->getErrorResponse()->errors[0]->code
+            );
+
+        } catch (ClientExceptionInterface $exception) {
+            echo $exception; // Every ApiExceptionInterface instance should implement __toString() method.
+            exit(-1);
+        }
+    }
+
 }

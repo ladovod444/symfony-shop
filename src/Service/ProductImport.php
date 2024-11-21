@@ -107,6 +107,7 @@ class ProductImport
         $retailCrmMessage = json_encode(
             [
                 'product_id' => $product->getId(),
+                'is_new' => true,
             ]
         );
 
