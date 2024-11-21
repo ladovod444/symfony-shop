@@ -57,6 +57,9 @@ class Product
     #[ORM\Column(nullable: true)]
     private ?int $retailcrm_id = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $offer_id = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -203,6 +206,18 @@ class Product
     public function setRetailcrmId(?int $retailcrm_id): static
     {
         $this->retailcrm_id = $retailcrm_id;
+
+        return $this;
+    }
+
+    public function getOfferId(): ?int
+    {
+        return $this->offer_id;
+    }
+
+    public function setOfferId(?int $offer_id): static
+    {
+        $this->offer_id = $offer_id;
 
         return $this;
     }

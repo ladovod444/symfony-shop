@@ -120,6 +120,9 @@ class OffersManager extends Manager
                 $price = new PriceUploadInput();
                 $price->id = $product->offers[0]->id; // ЭТО id торгового предложения !!!!
 
+                $site_product->setOfferId($product->offers[0]->id);
+                $this->entityManager->flush();
+
                 $price->prices = [
                     new PriceUploadPricesInput('base', $product_regular_price),
                     new PriceUploadPricesInput('current', $product_current_price),
