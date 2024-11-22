@@ -10,6 +10,7 @@ use App\Repository\OrderItemRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
+use App\Service\RetailCrm\OrderManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -34,7 +35,8 @@ class OrderController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly OrderRepository $orderRepository,
         private UserPasswordHasherInterface $userPasswordHasher,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
+        private OrderManager $manager
     ) {
 
     }
@@ -141,6 +143,12 @@ class OrderController extends AbstractController
         $order->setStatus('created');
         $this->entityManager->persist($order);
         $this->entityManager->flush();
+
+        //$resp = $this->manager->createOrder($order);
+        /////////////////
+//        return $this->json($resp, Response::HTTP_CREATED, context: [
+//            AbstractNormalizer::GROUPS => ['order:api:list'],
+//        ]);
 
         return $this->json($order, Response::HTTP_CREATED, context: [
             AbstractNormalizer::GROUPS => ['order:api:list'],

@@ -72,7 +72,7 @@ class ProductMessageHandler
             // Сделать обновление товара и цены
             $product_data['retailcrm_id'] = $product->getRetailcrmId();
             $this->product->updateProduct($product_data);
-            $this->offer->UpdateOffer($this->productRepository, $product->getRetailcrmId());
+            $this->offer->updateOffer($this->productRepository, $product->getRetailcrmId());
         }
         $this->entityManager->flush();
         //$this->entityManager->persist($product);
