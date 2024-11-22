@@ -46,6 +46,8 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('enabled'),
             BooleanField::new('isVerified'),
             TextField::new('confirmation_code'),
+            TextField::new('first_name'),
+            TextField::new('last_name'),
             CollectionField::new('orders')->useEntryCrudForm(OrderCrudController::class)
               ->setEntryIsComplex(),
         ];
