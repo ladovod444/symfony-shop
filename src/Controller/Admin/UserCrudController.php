@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class UserCrudController extends AbstractCrudController
@@ -48,6 +49,7 @@ class UserCrudController extends AbstractCrudController
             TextField::new('confirmation_code'),
             TextField::new('first_name'),
             TextField::new('last_name'),
+            IntegerField::new('customer_id')->setDisabled(),
             CollectionField::new('orders')->useEntryCrudForm(OrderCrudController::class)
               ->setEntryIsComplex(),
         ];
