@@ -33,6 +33,16 @@ services:
     App\Service\RetailCrm\ProductManager:
         $url: '%env(RETAIL_CRM_URL)%'
         $apiKey: '%env(RETAIL_CRM_API_KEY)%'
+    App\Service\RetailCrm\OffersManager:
+        $url: '%env(RETAIL_CRM_URL)%'
+        $apiKey: '%env(RETAIL_CRM_API_KEY)%'
+    App\Service\RetailCrm\OrderManager:
+        $url: '%env(RETAIL_CRM_URL)%'
+        $apiKey: '%env(RETAIL_CRM_API_KEY)%'
+    App\Service\RetailCrm\CustomerManager:
+        $url: '%env(RETAIL_CRM_URL)%'
+        $apiKey: '%env(RETAIL_CRM_API_KEY)%'
+
 
     app.normalizer.object_normalizer:
         parent: Symfony\Component\Serializer\Normalizer\ObjectNormalizer

@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Command\LockableTrait;
 
 #[AsCommand(
     name: 'app:retailcrm:update-offers',
@@ -19,6 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UpdateOffersCommand extends Command
 {
+    use LockableTrait;
     public function __construct(
         private readonly OffersManager $offersManager,
         private readonly ProductRepository $productRepository,
@@ -34,8 +36,15 @@ class UpdateOffersCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (!$this->lock()) {
+            $output->writeln('The command is already running in another process.');
+
+            return Command::SUCCESS;
+        }
         $count = $input->getOption('count') ? (int)$input->getOption('count') : 0;
-        $this->offersManager->UpdateOffers($this->productRepository, $count);
+        $this->offersManager->updateOffers($this->productRepository, $count);
+
+        $this->release();
         return Command::SUCCESS;
     }
 }

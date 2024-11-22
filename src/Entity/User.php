@@ -58,6 +58,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?bool $enabled = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $customer_id = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $first_name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $last_name = null;
+
     public function __construct()
     {
         $this->enabled = false;
@@ -245,6 +254,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $user->setEnabled(true);
 
         return $user;
+    }
+
+    public function getCustomerId(): ?int
+    {
+        return $this->customer_id;
+    }
+
+    public function setCustomerId(?int $customer_id): static
+    {
+        $this->customer_id = $customer_id;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->first_name;
+    }
+
+    public function setFirstName(?string $first_name): static
+    {
+        $this->first_name = $first_name;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->last_name;
+    }
+
+    public function setLastName(?string $last_name): static
+    {
+        $this->last_name = $last_name;
+
+        return $this;
     }
 
 }
