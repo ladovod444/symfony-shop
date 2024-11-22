@@ -16,6 +16,7 @@ use RetailCrm\Api\Interfaces\ClientExceptionInterface;
 use RetailCrm\Api\Model\Entity\Loyalty\SerializedOrder;
 use RetailCrm\Api\Model\Entity\Loyalty\SerializedOrderProduct;
 use RetailCrm\Api\Model\Entity\Loyalty\SerializedOrderProductOffer;
+use RetailCrm\Api\Model\Entity\Orders\SerializedRelationCustomer;
 use RetailCrm\Api\Model\Request\Orders\OrdersCreateRequest;
 use RetailCrm\Api\Model\Request\Orders\OrdersRequest;
 use RetailCrm\Api\Model\Request\Store\ProductsBatchCreateRequest;
@@ -37,13 +38,23 @@ class OrderManager extends Manager
      */
     public function createOrder(Order $order)
     {
+        // Пока сделать для имеющихся пользоватлей
+        $orderUser = $order->getOwner();
+        $customer_id = $orderUser->getCustomerId();
+
         $request = new OrdersCreateRequest();
 
         $request->order = new SerializedOrder();
 
         $request->order->countryIso = 'RU'; // @todo переделать
         $request->order->orderType = 2; // @todo переделать
-        $request->order->firstName = 'Dmitri'; // @todo переделать
+        //$request->order->firstName = 'Dmitri'; // @todo переделать
+        $request->order->customer = new SerializedRelationCustomer();
+        $request->order->customer->id = $customer_id;
+//        $request->order->firstName = $orderUser->getFirstName();
+//        $request->order->email = $orderUser->getEmail();
+
+        //$request->order->clientId = $customer_id;
 
         $request->order->items = [];
 
