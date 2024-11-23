@@ -10,6 +10,7 @@ use App\Repository\OrderItemRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
+use App\Service\RetailCrm\CustomerManager;
 use App\Service\RetailCrm\OrderManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Security;
@@ -36,7 +37,8 @@ class OrderController extends AbstractController
         private readonly OrderRepository $orderRepository,
         private UserPasswordHasherInterface $userPasswordHasher,
         private EventDispatcherInterface $eventDispatcher,
-        private OrderManager $manager
+        private OrderManager $manager,
+        private readonly CustomerManager $customerManager
     ) {
 
     }
@@ -127,6 +129,11 @@ class OrderController extends AbstractController
             //$user->setEnabled(true);
 
             $this->entityManager->persist($user);
+
+
+            // @todo нужно вынести код в Message ???
+            $id = $this->customerManager->createCustomer($user);
+            $user->setCustomerId($id);
             $this->entityManager->flush();
         }
         $order->setOwner($user);

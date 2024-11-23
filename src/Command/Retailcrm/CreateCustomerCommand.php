@@ -49,11 +49,11 @@ class CreateCustomerCommand extends Command
         $users = $this->userRepository->findAll();
 //        $users_count = 0;
         foreach ($users as $user) {
-            $customers_data = [];
-            $customers_data['email'] = $user->getEmail();
-            $customers_data['first_name'] = $user->getFirstName();
-            $customers_data['last_name'] = $user->getLastName();
-            $id = $this->manager->createCustomer($customers_data);
+//            $customers_data = [];
+//            $customers_data['email'] = $user->getEmail();
+//            $customers_data['first_name'] = $user->getFirstName();
+//            $customers_data['last_name'] = $user->getLastName();
+            $id = $this->manager->createCustomer($user);
 
             $user->setCustomerId($id);
             $this->entityTypeManager->flush();

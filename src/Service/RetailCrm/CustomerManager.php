@@ -2,6 +2,7 @@
 
 namespace App\Service\RetailCrm;
 
+use App\Entity\User;
 use Psr\Http\Client\ClientExceptionInterface;
 use RetailCrm\Api\Interfaces\ApiExceptionInterface;
 use RetailCrm\Api\Model\Entity\Customers\Customer;
@@ -11,15 +12,16 @@ class CustomerManager extends Manager
 {
     use Helper;
 
-    public function createCustomer($customers_data): string
+//    public function createCustomer($customers_data): string
+    public function createCustomer(User $user): string
     {
         $request = new CustomersCreateRequest();
         $request->customer = new Customer();
 
         //$request->site = 'aliexpress';
-        $request->customer->email = $customers_data['email'] ;
-        $request->customer->firstName = $customers_data['first_name'];
-        $request->customer->lastName = $customers_data['last_name'] ;
+        $request->customer->email = $user->getEmail();
+        $request->customer->firstName = $user->getFirstName();
+        $request->customer->lastName = $user->getLastName();
 
         try {
             $response = $this->client->customers->create($request);

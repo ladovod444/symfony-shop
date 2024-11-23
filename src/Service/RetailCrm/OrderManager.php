@@ -51,10 +51,6 @@ class OrderManager extends Manager
         //$request->order->firstName = 'Dmitri'; // @todo переделать
         $request->order->customer = new SerializedRelationCustomer();
         $request->order->customer->id = $customer_id;
-//        $request->order->firstName = $orderUser->getFirstName();
-//        $request->order->email = $orderUser->getEmail();
-
-        //$request->order->clientId = $customer_id;
 
         $request->order->items = [];
 
