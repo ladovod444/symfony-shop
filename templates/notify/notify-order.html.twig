@@ -10,10 +10,29 @@
 <body>
 <div class="container">
     <p>Вы сделали заказ, номер {{ order.id }}</p>
-    <p>Состав заказа</p>
-    <p>
-        @TODO - добавить
-    </p>
+    <p>Состав заказа:</p>
+
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total Price</th>
+        </tr>
+        {% set total_sum = 0 %}
+        {% for order_item in order.orderItems %}
+
+        <tr>
+            <td>{{ order_item.product.title }}</td>
+            <td>{{ order_item.product.getCurrentPrice() }}</td>
+            <td>{{ order_item.quantity }}</td>
+            <td>{{ order_item.product.getCurrentPrice() * order_item.quantity }}</td>
+        </tr>
+            {% set total_sum = total_sum + order_item.product.getCurrentPrice() * order_item.quantity  %}
+        {% endfor %}
+    </table>
+
+    <p>Общая сумма заказа: {{ total_sum }}</p>
 
 </div>
 </body>
