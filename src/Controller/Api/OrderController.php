@@ -132,9 +132,9 @@ class OrderController extends AbstractController
 
 
             // @todo нужно вынести код в Message ???
-            $id = $this->customerManager->createCustomer($user);
-            $user->setCustomerId($id);
-            $this->entityManager->flush();
+//            $id = $this->customerManager->createCustomer($user);
+//            $user->setCustomerId($id);
+//            $this->entityManager->flush();
         }
         $order->setOwner($user);
         $this->entityManager->persist($order);

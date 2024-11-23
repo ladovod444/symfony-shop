@@ -16,7 +16,7 @@ use Doctrine\ORM\Events;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 //#[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: Order::class)]
-#[AsDoctrineListener(event: Events::postFlush, priority: 500, connection: 'default')]
+//#[AsDoctrineListener(event: Events::postFlush, priority: 500, connection: 'default')]
 #[AsDoctrineListener(event: Events::postPersist, priority: 500, connection: 'default')]
 class UserCreated
 {
@@ -30,25 +30,26 @@ class UserCreated
 
     }
 
-    public function postFlush(PostFlushEventArgs $args): void
-    {
+//    public function postFlush(PostFlushEventArgs $args): void
+//    {
+//        //dd($this->entities);
 //        foreach ($this->entities as $entity) {
 ////            //$this->bus->dispatch(new OrderMessage($entity->getId()));
-//            $id = $this->customerManager->createCustomer($entity);
-//            $entity->setCustomerId($id);
-//            //$this->entityTypeManager->flush();  /// НЕЛЬЗЯ
+//
+////            $id = $this->customerManager->createCustomer($entity);
+////            $entity->setCustomerId($id);
 //
 //        }
-    }
+//        ///var_dump($this->entities);
+//    }
 
     public function postPersist(PostPersistEventArgs $event): void
     {
-
-//        if ($event->getObject() instanceof User) {
-//            $entity = $event->getObject();
-//            ///dd($args);
-//            $this->entities[$entity->getId()] = $entity;
-//            // И далее эти $this->entites можно увидеть в событии postFlush выше по коду
-//        }
+        if ($event->getObject() instanceof User) {
+            $entity = $event->getObject();
+            $id = $this->customerManager->createCustomer($entity);
+            $entity->setCustomerId($id);
+            $this->entityTypeManager->flush();
+        }
     }
 }
