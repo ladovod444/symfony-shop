@@ -13,7 +13,7 @@ class CustomerManager extends Manager
     use Helper;
 
 //    public function createCustomer($customers_data): string
-    public function createCustomer(User $user): string
+    public function createCustomer(User $user): int
     {
         $request = new CustomersCreateRequest();
         $request->customer = new Customer();

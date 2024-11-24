@@ -12,7 +12,11 @@ class ProductsRetailcrmBus
 
     }
 
-    public function execute($message)
+    /**
+     * @param string $message
+     * @return void
+     */
+    public function execute(string $message): void
     {
         $this->bus->dispatch(ProductMessage::create($message));
     }
