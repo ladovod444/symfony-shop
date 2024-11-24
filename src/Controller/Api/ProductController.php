@@ -4,13 +4,11 @@ namespace App\Controller\Api;
 
 use App\Dto\ProductDto;
 use App\Entity\Product;
-use App\Repository\ProductRepository;
-use App\Repository\UserRepository;
+use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -26,10 +24,8 @@ class ProductController extends AbstractController
     const ITEMS_PER_PAGE = 10;
 
     public function __construct(
-        private ProductRepository      $productRepository,
-        private EntityManagerInterface $entityManager,
-        private UserRepository         $userRepository,
-        private ParameterBagInterface $parameterBag
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ProductService        $productService,
     ) {
 
     }
@@ -55,27 +51,7 @@ class ProductController extends AbstractController
             //$page = 1;
         }
 
-        //dd($this->parameterBag->get('app:api_per_age'));
-
-        $products = $this->productRepository->findBy(
-            [],
-            ['id' => 'DESC'],
-            //limit: self::ITEMS_PER_PAGE,
-            limit: $this->parameterBag->get('app:api_per_age'),
-            offset: $offset
-        );
-
-        if (!$page) {
-            $products = $this->productRepository->findBy(
-                [],
-                ['id' => 'DESC'],
-                //limit: self::ITEMS_PER_PAGE,
-//                limit: $this->parameterBag->get('app:api_per_age'),
-//                offset: $offset
-            );
-        }
-
-
+        $products = $this->productService->getProducts($offset, $offset);
         return $this->json($products, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);
@@ -111,18 +87,14 @@ class ProductController extends AbstractController
         description: 'Create a product',
         content:  new Model(type: ProductDto::class)
     )]
-    public function addDto(Request $request, #[MapRequestPayload] ProductDto $ProductDto): Response
+    public function addDto(#[MapRequestPayload] ProductDto $productDto): Response
     //                         #[MapRequestPayload(
     //                          // acceptFormat: 'json',
     //                          // resolver: 'App\Resolver\ProductResolver',
     //                         )] ProductDto $ProductDto): Response
     {
-        //dd($ProductDto);
-        $user = $this->userRepository->findOneBy(['email' => 'ladovod@gmail.com']);
-        $product = Product::createFromDto($user, $ProductDto, $this->userRepository);
 
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
+        $product = $this->productService->createProduct($productDto);
 
         return $this->json($product, Response::HTTP_CREATED, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
@@ -137,8 +109,7 @@ class ProductController extends AbstractController
     )]
     public function updateDto(Product $product, #[MapRequestPayload] ProductDto $productDto): Response
     {
-        $product = Product::updateFromDto($productDto, $product);
-        $this->entityManager->flush();
+        $product = $this->productService->updateProduct($product, $productDto);
 
         return $this->json($product, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
