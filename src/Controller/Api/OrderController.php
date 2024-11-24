@@ -3,22 +3,13 @@
 namespace App\Controller\Api;
 
 use App\Entity\Order;
-use App\Entity\OrderItem;
 use App\Entity\User;
-use App\Event\RegisteredUserEvent;
-use App\Repository\OrderItemRepository;
-use App\Repository\OrderRepository;
-use App\Repository\ProductRepository;
-use App\Repository\UserRepository;
-use App\Service\RetailCrm\CustomerManager;
-use App\Service\RetailCrm\OrderManager;
+use App\Service\OrderService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Security;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
@@ -30,15 +21,8 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 class OrderController extends AbstractController
 {
     public function __construct(
-        private readonly OrderItemRepository $orderItemRepository,
-        private readonly ProductRepository $productRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository $userRepository,
-        private readonly OrderRepository $orderRepository,
-        private UserPasswordHasherInterface $userPasswordHasher,
-        private EventDispatcherInterface $eventDispatcher,
-        private OrderManager $manager,
-        private readonly CustomerManager $customerManager
+        private readonly OrderService $orderService,
     ) {
 
     }
@@ -58,12 +42,7 @@ class OrderController extends AbstractController
             $offset = 0;
             //$page = 1;
         }
-        $orders = $this->orderRepository->findBy(
-            [],
-            ['id' => 'DESC'],
-            limit: self::ITEMS_PER_PAGE,
-            offset: $offset
-        );
+        $orders = $this->orderService->getOrders( self::ITEMS_PER_PAGE, $offset);
 
         return $this->json($orders, Response::HTTP_OK, context: [
             //AbstractNormalizer::GROUPS => ['products:api:list'],
@@ -89,12 +68,8 @@ class OrderController extends AbstractController
             $offset = 0;
             //$page = 1;
         }
-        $orders = $this->orderRepository->findBy(
-            ['owner' => $user->getId()],
-            ['id' => 'DESC'],
-            limit: self::ITEMS_PER_PAGE,
-            offset: $offset
-        );
+
+        $orders = $this->orderService->getUserOrders($user, self::ITEMS_PER_PAGE, $offset);
 
         return $this->json($orders, Response::HTTP_OK, context: [
             //AbstractNormalizer::GROUPS => ['products:api:list'],
@@ -112,51 +87,7 @@ class OrderController extends AbstractController
     {
         $payload = json_decode($request->getContent(), true);
 
-        $order = new Order();
-        $user = $this->userRepository->findOneBy(['email' => $payload['mail']]);
-        // Если нет user, то нужно создать
-        if (!$user) {
-            $user = new User();
-            $user->setEmail($payload['mail']);
-
-            $plainPassword = 'test';
-            // encode the plain password
-            $user->setPassword($this->userPasswordHasher->hashPassword($user, $plainPassword));
-
-            // @todo продумать отправку email вновь соазданному юзеру
-//            $registerUserEvent = new RegisteredUserEvent($user);
-//            $this->eventDispatcher->dispatch($registerUserEvent, RegisteredUserEvent::NAME);
-            //$user->setEnabled(true);
-
-            $this->entityManager->persist($user);
-
-
-            // @todo нужно вынести код в Message ???
-//            $id = $this->customerManager->createCustomer($user);
-//            $user->setCustomerId($id);
-//            $this->entityManager->flush();
-        }
-        $order->setOwner($user);
-        $this->entityManager->persist($order);
-
-        foreach ($payload['order'] as $order_item) {
-            $orderItem = new OrderItem();
-            $orderItem->setProduct($this->productRepository->find($order_item['id']))
-                ->setQuantity($order_item['quantity'])
-                ->setOrd($order);
-            $this->entityManager->persist($orderItem);
-            $order->addOrderItem($orderItem);
-        }
-        $order->setStatus('created');
-        $this->entityManager->persist($order);
-        $this->entityManager->flush();
-
-        //$resp = $this->manager->createOrder($order);
-        /////////////////
-//        return $this->json($resp, Response::HTTP_CREATED, context: [
-//            AbstractNormalizer::GROUPS => ['order:api:list'],
-//        ]);
-
+        $order = $this->orderService->createOrder($payload);
         return $this->json($order, Response::HTTP_CREATED, context: [
             AbstractNormalizer::GROUPS => ['order:api:list'],
         ]);
@@ -238,10 +169,7 @@ class OrderController extends AbstractController
     public function changeState(Order $order, Request $request): Response
     {
         $payload = json_decode($request->getContent(), true);
-        $state = $payload['state'];
-
-        $order->setStatus($state);
-        $this->entityManager->flush($order);
+        $order = $this->orderService->changeOrderState($payload, $order);
 
         return $this->json($order, Response::HTTP_OK);
     }
