@@ -47,6 +47,7 @@ class ProductService
         
         return array_map(
             fn(Product $item) => new ProductDto(
+                $item->getId(),
                 $item->getTitle(),
                 $item->getDescription(),
                 $item->getSku(),
