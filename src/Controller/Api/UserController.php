@@ -4,24 +4,17 @@ namespace App\Controller\Api;
 
 use App\Dto\ProductDto;
 use App\Dto\UserDto;
-use App\Entity\Product;
 use App\Entity\User;
-use App\Repository\ProductRepository;
-use App\Repository\UserRepository;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 #[OA\Tag(name: "Users api")]
@@ -32,10 +25,8 @@ class UserController extends AbstractController
     const ITEMS_PER_PAGE = 10;
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private UserRepository         $userRepository,
-        private ParameterBagInterface $parameterBag,
-        private UserPasswordHasherInterface $userPasswordHasher
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UserService $userService,
     ) {
 
     }
@@ -61,23 +52,7 @@ class UserController extends AbstractController
             //$page = 1;
         }
 
-        //dd($this->parameterBag->get('app:api_per_age'));
-
-        $users = $this->userRepository->findBy(
-            [],
-            ['id' => 'DESC'],
-            //limit: self::ITEMS_PER_PAGE,
-            limit: $this->parameterBag->get('app:api_per_age'),
-            offset: $offset
-        );
-
-        if (!$page) {
-            $users= $this->userRepository->findBy(
-                [],
-                ['id' => 'DESC'],
-            );
-        }
-
+        $users = $this->userService->getUsers($offset, self::ITEMS_PER_PAGE);
         return $this->json($users, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);
@@ -143,12 +118,8 @@ class UserController extends AbstractController
     //                          // resolver: 'App\Resolver\ProductResolver',
     //                         )] ProductDto $ProductDto): Response
     {
-        //dd($ProductDto);
-        //$user = $this->userRepository->findOneBy(['email' => 'ladovod@gmail.com']);
-        $user = User::createFromDto($userDto, $this->userRepository, $this->userPasswordHasher);
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $user = $this->userService->createUser($userDto);
 
         return $this->json($user, Response::HTTP_CREATED, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
@@ -163,9 +134,8 @@ class UserController extends AbstractController
     )]
     public function updateDto(User $user, #[MapRequestPayload] UserDto $userDto): Response
     {
-        $user = User::updateFromDto($userDto, $user);
-        $this->entityManager->flush();
 
+        $user = $this->userService->updateUser($user, $userDto);
         return $this->json($user, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);
