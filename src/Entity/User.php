@@ -62,9 +62,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $customer_id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['products:api:list', 'order:api:list'])]
     private ?string $first_name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['products:api:list', 'order:api:list'])]
     private ?string $last_name = null;
 
     public function __construct()
@@ -247,6 +249,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ): static {
 
         $user->setEmail($userDto->email);
+        $user->setFirstName($userDto->first_name);
+        $user->setLastName($userDto->last_name);
 
         $plainPassword = $userDto->password;
         // encode the plain password
