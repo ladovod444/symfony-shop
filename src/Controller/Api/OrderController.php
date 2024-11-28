@@ -161,7 +161,7 @@ class OrderController extends AbstractController
         return $this->json([], Response::HTTP_NO_CONTENT);
     }
 
-    #[Route('/order/change-state/{order}', name: 'api-order-delete', methods: ['patch'], format: 'json')]
+    #[Route('/order/change-state/{order}', name: 'api-order-update', methods: ['patch'], format: 'json')]
     #[OA\Response(
         response: 200,
         description: 'Update order state',

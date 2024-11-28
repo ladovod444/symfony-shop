@@ -43,14 +43,17 @@ class ProductImport
             $this->fortnite_api_key
         );
 
+       // dd($products_data);
+
         $products = json_decode($products_data, true);
         $products = $products['shop'];
+        //dd($products);
 
         $batchSize = 20;
         $data_count = 0;
         $this->logger->info('Start importing products');
         foreach ($products as $product_data) {
-            // dd($product_data); exit;
+             dd($product_data); exit;
             $this->createProduct($product_data);
             ++$data_count;
             if (($data_count % $batchSize) === 0) {

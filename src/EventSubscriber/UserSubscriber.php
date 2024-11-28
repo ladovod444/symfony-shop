@@ -34,7 +34,7 @@ class UserSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-          RegisteredUserEvent::NAME => 'onUserRegister',
+            RegisteredUserEvent::NAME => 'onUserRegister',
             Events::AUTHENTICATION_SUCCESS => 'onAuthenticationSuccess',
         ];
     }

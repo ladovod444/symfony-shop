@@ -40,7 +40,8 @@ class ProductMessageHandler
      * @throws ValidationException
      * @throws MissingParameterException
      */
-    public function __invoke(ProductMessage $productMessage): void {
+    public function __invoke(ProductMessage $productMessage): void
+    {
 
         // 0. Получим содержимое сообщения
         $productData = $productMessage->getContent();
@@ -48,9 +49,8 @@ class ProductMessageHandler
 
 
         // 1. Получить product
-        $productId = (int) $productData['product_id'];
+        $productId = (int)$productData['product_id'];
         $product = $this->productRepository->find($productId);
-
 
         $product_data = [
             'id' => $product->getId(),
@@ -66,9 +66,7 @@ class ProductMessageHandler
 
             // Сохранить retailcrm_id для Product
             $product->setRetailcrmId($data[0]);
-        }
-
-        else {
+        } else {
             // Сделать обновление товара и цены
             $product_data['retailcrm_id'] = $product->getRetailcrmId();
             $this->product->updateProduct($product_data);
@@ -76,7 +74,6 @@ class ProductMessageHandler
         }
         $this->entityManager->flush();
         //$this->entityManager->persist($product);
-
 
     }
 

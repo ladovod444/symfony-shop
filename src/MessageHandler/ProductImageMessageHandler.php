@@ -6,6 +6,7 @@ use App\Message\ProductImageMessage;
 use App\Repository\ProductRepository;
 use App\Service\HttpClient;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -22,7 +23,7 @@ class ProductImageMessageHandler
      * @param \App\Message\ProductImageMessage $productImageMessage
      *
      * @return void
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function __invoke(ProductImageMessage $productImageMessage): void
     {
