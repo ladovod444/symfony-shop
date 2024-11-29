@@ -36,14 +36,12 @@ class ProductImport
     /**
      * @throws GuzzleException
      */
-    public function import($count): void
+    public function import(int $count): void
     {
         $products_data = $this->httpClient->get(
             $this->fortnite_api_url,
             $this->fortnite_api_key
         );
-
-       // dd($products_data);
 
         $products = json_decode($products_data, true);
         $products = $products['shop'];
@@ -53,7 +51,6 @@ class ProductImport
         $data_count = 0;
         $this->logger->info('Start importing products');
         foreach ($products as $product_data) {
-             dd($product_data); exit;
             $this->createProduct($product_data);
             ++$data_count;
             if (($data_count % $batchSize) === 0) {
@@ -73,6 +70,10 @@ class ProductImport
         $this->logger->info('Finish importing products');
     }
 
+    /**
+     * @param array $product_data
+     * @return void
+     */
     public function createProduct(array $product_data): void
     {
         // $user = $this->userRepository->findOneBy(['email' => 'ladovod@gmail.com']);

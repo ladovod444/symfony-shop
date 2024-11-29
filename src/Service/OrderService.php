@@ -5,10 +5,12 @@ namespace App\Service;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\User;
+use App\Exceptions\ProductNotFound;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class OrderService
@@ -19,6 +21,7 @@ class OrderService
         private readonly UserRepository $userRepository,
         private readonly ProductRepository $productRepository,
         private readonly OrderRepository $orderRepository,
+        private readonly ParameterBagInterface $parameterBag,
     )
     {
     }
@@ -77,6 +80,8 @@ class OrderService
      */
     public function createOrder(array $payload): Order
     {
+        $order_status = $this->parameterBag->get('app:order_created_status');
+
         $order = new Order();
         $user = $this->userRepository->findOneBy(['email' => $payload['mail']]);
         // Если нет user, то нужно создать
@@ -106,13 +111,18 @@ class OrderService
 
         foreach ($payload['order'] as $order_item) {
             $orderItem = new OrderItem();
+            $product = $this->productRepository->find($order_item['id']);
+            //dd($product);
+            if (null === $product) {
+                throw new ProductNotFound($order_item['id']);
+            }
             $orderItem->setProduct($this->productRepository->find($order_item['id']))
                 ->setQuantity($order_item['quantity'])
                 ->setOrd($order);
             $this->entityManager->persist($orderItem);
             $order->addOrderItem($orderItem);
         }
-        $order->setStatus('created');
+        $order->setStatus($order_status);
         $this->entityManager->persist($order);
         $this->entityManager->flush();
 

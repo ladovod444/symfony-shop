@@ -57,7 +57,7 @@ class OrderController extends AbstractController
      * @return Response
      */
     #[Route('/order/user/{user}', name: 'api-order-user-orders', methods: ['GET'], format: 'json')]
-    public function indexOrder(User $user, Request $request): Response
+    public function userOrders(User $user, Request $request): Response
     {
         $page = $request->get('page', 0);
 

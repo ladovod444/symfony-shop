@@ -5,6 +5,7 @@ namespace App\Service;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
+
 class HttpClient
 {
     /**
@@ -20,8 +21,7 @@ class HttpClient
             ],
         ]);
 
-        $response = $client->get($url);
-        //file_put_contents("text.txt", $response->getBody()->getContents());
+        $response = $client->request('GET', $url);
         return $response->getBody()->getContents();
     }
 }

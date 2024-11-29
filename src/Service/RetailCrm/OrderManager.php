@@ -38,6 +38,8 @@ class OrderManager extends Manager
      */
     public function createOrder(Order $order)
     {
+        $countryIso = $this->parameterBag->get('app:retailcrm:country_iso');
+        $orderType = $this->parameterBag->get('app:retailcrm:order_type');
         // Пока сделать для имеющихся пользоватлей
         $orderUser = $order->getOwner();
         $customer_id = $orderUser->getCustomerId();
@@ -46,8 +48,8 @@ class OrderManager extends Manager
 
         $request->order = new SerializedOrder();
 
-        $request->order->countryIso = 'RU'; // @todo переделать
-        $request->order->orderType = 2; // @todo переделать
+        $request->order->countryIso = $countryIso;
+        $request->order->orderType = $orderType;
         //$request->order->firstName = 'Dmitri'; // @todo переделать
         $request->order->customer = new SerializedRelationCustomer();
         $request->order->customer->id = $customer_id;

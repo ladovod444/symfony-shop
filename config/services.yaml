@@ -6,6 +6,9 @@
 parameters:
     app:api_per_age: '%env(int:ITEMS_PER_PAGE)%'
     app:import_product_author: '%env(int:IMPORT_PRODUCT_AUTHOR)%'
+    app:order_created_status: '%env(ORDER_CREATED_STATUS)%'
+    app:retailcrm:country_iso: '%env(COUNTRY_ISO)%'
+    app:retailcrm:order_type: '%env(RETAIL_CRM_ORDER_TYPE)%'
 
 services:
     # default configuration for services in *this* file
@@ -42,6 +45,10 @@ services:
     App\Service\RetailCrm\CustomerManager:
         $url: '%env(RETAIL_CRM_URL)%'
         $apiKey: '%env(RETAIL_CRM_API_KEY)%'
+
+#    App\EventSubscriber\ExceptionResponseSubscriber:
+#        tags:
+#            - { name: kernel.event_subscriber, event: kernel.exception }
 
 
     app.normalizer.object_normalizer:

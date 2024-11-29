@@ -44,7 +44,7 @@ class ProductService
 //                offset: $offset
             );
         }
-        
+
         return array_map(
             fn(Product $item) => new ProductDto(
                 $item->getId(),

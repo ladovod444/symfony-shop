@@ -68,14 +68,11 @@ class ProductController extends AbstractController
     )]
     #[OA\Response(
         response: 200,
-        description: 'Returns Product, yes!!!',
+        description: 'Returns Product',
         content:  new Model(type: ProductDto::class)
     )]
     public function getProduct(Product $product): Response
     {
-        if (null === $product) {
-            return $this->json(null, Response::HTTP_NOT_FOUND);
-        }
         return $this->json($product, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);
