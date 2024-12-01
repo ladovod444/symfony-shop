@@ -13,6 +13,7 @@
         "doctrine/orm": "^3.2",
         "easycorp/easyadmin-bundle": "4.x-dev",
         "guzzlehttp/guzzle": "^7.9",
+        "halaxa/json-machine": "^1.2",
         "koco/messenger-kafka": "^0.18.0",
         "lexik/jwt-authentication-bundle": "^3.1",
         "nelmio/api-doc-bundle": "^4.32",
