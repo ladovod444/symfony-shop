@@ -13,6 +13,7 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 //#[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: Order::class)]
@@ -25,7 +26,8 @@ class UserCreated
     public function __construct(
         private readonly MessageBusInterface $bus,
         private readonly CustomerManager $customerManager,
-        private readonly EntityManagerInterface $entityTypeManager
+        private readonly EntityManagerInterface $entityTypeManager,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
 
     }
@@ -45,7 +47,8 @@ class UserCreated
 
     public function postPersist(PostPersistEventArgs $event): void
     {
-        if ($event->getObject() instanceof User) {
+        $env = $this->parameterBag->get('kernel.environment');
+        if ($event->getObject() instanceof User && $env !== 'test') {
             $entity = $event->getObject();
             $id = $this->customerManager->createCustomer($entity);
             $entity->setCustomerId($id);
