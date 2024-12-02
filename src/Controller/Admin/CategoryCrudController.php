@@ -31,23 +31,21 @@ class CategoryCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
 //        yield IntegerField::new('id');
-        yield TextField::new('title');
-        yield TextField::new('slug');
-
         $products = CollectionField::new('products')
           //->renderExpanded()
 //          ->useEntryCrudForm(ProductCrudController::class)
 //          ->setEntryIsComplex()
         ;
 
-        if (Crud::PAGE_EDIT === $pageName) {
 
-            //yield $products;
-        }
-        else {
+        if (Crud::PAGE_EDIT !== $pageName && Crud::PAGE_NEW !== $pageName) {
+
             yield IntegerField::new('id');
             yield $products;
         }
+        yield TextField::new('title');
+        yield TextField::new('slug');
+
     }
 
 }
