@@ -7,6 +7,7 @@ use App\Entity\Category;
 
 use App\Repository\CategoryRepository;
 use App\Repository\UserRepository;
+use App\Service\CategoryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
@@ -28,10 +29,8 @@ class CategoryController extends AbstractController
     const ITEMS_PER_PAGE = 10;
 
     public function __construct(
-        private CategoryRepository      $categoryRepository,
         private EntityManagerInterface $entityManager,
-        private UserRepository         $userRepository,
-        private ParameterBagInterface $parameterBag
+        private CategoryService $categoryService
     ) {
 
     }
@@ -56,24 +55,7 @@ class CategoryController extends AbstractController
             $offset = 0;
             //$page = 1;
         }
-
-        $categories = $this->categoryRepository->findBy(
-            [],
-            ['id' => 'DESC'],
-            //limit: self::ITEMS_PER_PAGE,
-            limit: $this->parameterBag->get('app:api_per_age'),
-            offset: $offset
-        );
-
-        if (!$page) {
-            $categories = $this->categoryRepository->findBy(
-                [],
-                ['id' => 'DESC'],
-                //limit: self::ITEMS_PER_PAGE,
-//                limit: $this->parameterBag->get('app:api_per_age'),
-//                offset: $offset
-            );
-        }
+        $categories = $this->categoryService->getCategories($page, $offset);
 
         return $this->json($categories, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
@@ -82,12 +64,9 @@ class CategoryController extends AbstractController
 
     #[Route('/category/{slug}', name: 'api-category', methods: ['GET'], format: 'json')]
     #[OA\Parameter(
-        name: "Accept-Language",
-        description: "Set language parameter by RFC2616 <https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4>",
+        name: "Slug",
+        description: "Category slug",
         in: "header",
-//        OA\Schema(
-//            type="string"
-//        )
     )]
     #[OA\Response(
         response: 200,
@@ -96,9 +75,6 @@ class CategoryController extends AbstractController
     )]
     public function getCategory(#[MapEntity(mapping: ["slug" => "slug"])] Category $category): Response
     {
-        if (null === $category) {
-            return $this->json(null, Response::HTTP_NOT_FOUND);
-        }
         return $this->json($category, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);
@@ -110,16 +86,13 @@ class CategoryController extends AbstractController
         description: 'Create a category',
         content:  new Model(type: CategoryDto::class)
     )]
-    public function addDto(Request $request, #[MapRequestPayload] CategoryDto $CategoryDto): Response
+    public function addDto(Request $request, #[MapRequestPayload] CategoryDto $categoryDto): Response
     //                         #[MapRequestPayload(
     //                          // acceptFormat: 'json',
     //                          // resolver: 'App\Resolver\categoryResolver',
     //                         )] CategoryDto $CategoryDto): Response
     {
-        $category = Category::createFromDto($CategoryDto);
-
-        $this->entityManager->persist($category);
-        $this->entityManager->flush();
+        $category = $this->categoryService->createCategory($categoryDto);
 
         return $this->json($category, Response::HTTP_CREATED, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
@@ -132,10 +105,9 @@ class CategoryController extends AbstractController
         description: 'Update a category',
         content:  new Model(type: CategoryDto::class)
     )]
-    public function updateDto(Category $category, #[MapRequestPayload] CategoryDto $CategoryDto): Response
+    public function updateDto(Category $category, #[MapRequestPayload] CategoryDto $categoryDto): Response
     {
-        $category = Category::updateFromDto($CategoryDto, $category);
-        $this->entityManager->flush();
+        $category =$this->categoryService->updateCategory($categoryDto, $category);
 
         return $this->json($category, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
