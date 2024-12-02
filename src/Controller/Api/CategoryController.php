@@ -21,6 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+
 #[OA\Tag(name: "Products api")]
 #[Route('/api/v1')]
 #[Security(name: "Bearer")]
@@ -71,7 +72,7 @@ class CategoryController extends AbstractController
     #[OA\Response(
         response: 200,
         description: 'Returns a Category',
-        content:  new Model(type: CategoryDto::class)
+        content: new Model(type: CategoryDto::class)
     )]
     public function getCategory(#[MapEntity(mapping: ["slug" => "slug"])] Category $category): Response
     {
@@ -84,13 +85,13 @@ class CategoryController extends AbstractController
     #[OA\Response(
         response: 200,
         description: 'Create a category',
-        content:  new Model(type: CategoryDto::class)
+        content: new Model(type: CategoryDto::class)
     )]
     public function addDto(Request $request, #[MapRequestPayload] CategoryDto $categoryDto): Response
-    //                         #[MapRequestPayload(
-    //                          // acceptFormat: 'json',
-    //                          // resolver: 'App\Resolver\categoryResolver',
-    //                         )] CategoryDto $CategoryDto): Response
+        //                         #[MapRequestPayload(
+        //                          // acceptFormat: 'json',
+        //                          // resolver: 'App\Resolver\categoryResolver',
+        //                         )] CategoryDto $CategoryDto): Response
     {
         $category = $this->categoryService->createCategory($categoryDto);
 
@@ -103,11 +104,11 @@ class CategoryController extends AbstractController
     #[OA\Response(
         response: 200,
         description: 'Update a category',
-        content:  new Model(type: CategoryDto::class)
+        content: new Model(type: CategoryDto::class)
     )]
     public function updateDto(Category $category, #[MapRequestPayload] CategoryDto $categoryDto): Response
     {
-        $category =$this->categoryService->updateCategory($categoryDto, $category);
+        $category = $this->categoryService->updateCategory($categoryDto, $category);
 
         return $this->json($category, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
@@ -121,8 +122,9 @@ class CategoryController extends AbstractController
 //        content:  new Model(type: CategoryDto::class)
     )]
 //    #[IsGranted('category_DELETE', 'category')]
-    public function delete(Category $category): Response
-    {
+    public function delete(
+        Category $category
+    ): Response {
         $this->entityManager->remove($category);
         $this->entityManager->flush();
 

@@ -74,9 +74,6 @@ class UserController extends AbstractController
     )]
     public function getUserData(User $user): Response
     {
-        if (null === $user) {
-            return $this->json(null, Response::HTTP_NOT_FOUND);
-        }
         return $this->json($user, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);
@@ -98,9 +95,6 @@ class UserController extends AbstractController
     )]
     public function getUserByEmail(#[MapEntity(mapping: ["email" => "email"])]User $user): Response
     {
-        if (null === $user) {
-            return $this->json(null, Response::HTTP_NOT_FOUND);
-        }
         return $this->json($user, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
         ]);
@@ -134,7 +128,6 @@ class UserController extends AbstractController
     )]
     public function updateDto(User $user, #[MapRequestPayload] UserDto $userDto): Response
     {
-
         $user = $this->userService->updateUser($user, $userDto);
         return $this->json($user, Response::HTTP_OK, context: [
             AbstractNormalizer::GROUPS => ['products:api:list'],
@@ -150,7 +143,6 @@ class UserController extends AbstractController
 //    #[IsGranted('PRODUCT_DELETE', 'product')]
     public function delete(User $user): Response
     {
-        //dd($product);
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 
