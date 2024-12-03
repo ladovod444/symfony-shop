@@ -19,6 +19,18 @@ class Contacts
 
     }
 
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
     public function getBody(): ?string
     {
         return $this->body;

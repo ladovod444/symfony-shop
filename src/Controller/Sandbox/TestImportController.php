@@ -6,6 +6,7 @@ use App\Repository\ProductRepository;
 use App\Service\HttpClient;
 use App\Service\ProductImport;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,11 +23,19 @@ class TestImportController extends AbstractController
     ) {
     }
 
-    #[NoReturn] #[Route('/test-import', name: 'app_test_import')]
+    #[Route('/test-json', name: 'app_test_json')]
+    public function importJson(): Response
+    {
+        //throw new Exception("Test Exception");
+        return $this->json([]);
+    }
+
+    #[Route('/test-import', name: 'app_test_import')]
     public function importTest(): Response
     {
         // $user = $this->getUser();
         // $this->productImport->import($user);
+        //throw new Exception("Test Exception");
         $count = 1;
         $this->productImport->import($count);
         exit;
@@ -37,7 +46,7 @@ class TestImportController extends AbstractController
         );
     }
 
-    #[Route('/test-image-save/{productId}', name: 'app_test_import')]
+    #[Route('/test-image-save/{productId}', name: 'app_test_image_save')]
     public function testImageSave(int $productId): Response
     {
         $url = 'https://media.fortniteapi.io/images/displayAssets/v2/MAX/DAv2_Bundle_Featured_ElegantLilyCharm/MI_0.png';

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Order;
 use App\Repository\ProductRepository;
 use RetailCrm\Api\Enum\Product\ProductType;
 use RetailCrm\Api\Factory\SimpleClientFactory;
@@ -295,6 +296,20 @@ class TestCrmController extends AbstractController
 
         dd($response);
 
+    }
+
+    #[Route('/test/order-test/{order}', name: 'app_test_order_test')]
+    public function testOrder(Order $order): Response
+    {
+
+
+        //$response = $this->product->getOffers();
+        //dd($response);
+
+        return $this->render('notify/notify-order.html.twig', [
+            'controller_name' => 'TestCrmController',
+            'order' => $order,
+        ]);
     }
 
 }
