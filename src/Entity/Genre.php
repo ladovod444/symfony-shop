@@ -29,6 +29,7 @@ class Genre
      * @var Collection<int, Product>
      */
     #[ORM\ManyToMany(targetEntity: Product::class, mappedBy: 'genre')]
+    #[Groups(['products:api:list'])]
     private Collection $products;
 
     public function __construct()
