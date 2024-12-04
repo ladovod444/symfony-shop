@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CatalogController!{% endblock %}
+
+{% block body %}
+
+    <h1>Catalog</h1>
+
+    <div class="form-wrapper">
+        <h2>Enter search data</h2>
+        {{ form_start(formSearch) }}
+        <div class="form-item">
+            {{ form_row(formSearch.title) }}
+        </div>
+        <div class="form-item category">
+            {{ form_row(formSearch.category) }}
+        </div>
+{#        {{ form_widget(formSearch) }}#}
+        <div class="form-item">
+            <button class="btn btn-primary">{{ button_label|default('Search') }}</button>
+        </div>
+        {{ form_end(formSearch) }}
+    </div>
+    <div class="products-wrapper">
+        {#    <h1>Hello {{ controller_name }}! ✅</h1> #}
+        {% for product in pagination %}
+            <div class="product-teaser">
+                <div class="product-teaser_image">
+                    <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.title }}"/>
+                </div>
+                <div class="product-teaser_title">{{ product.title }}</div>
+                <div class="product-teaser_category">{{ product.category.title }}</div>
+
+                <div class="product-teaser_genre">
+                    {% for genre in product.genre %}
+                        <span class="genre_item"> {{ genre.title }} </span>
+                    {% endfor %}
+                </div>
+
+                <div class="product-teaser_price">{{ product.currentPrice }}</div>
+
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

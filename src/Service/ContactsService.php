@@ -27,7 +27,7 @@ class ContactsService
 
         $this->entityManager->flush();
 
-        
+
         // Отправить слушателям событие о создании контактов
         $event = new ContactsSendEvent($contacts_entity);
         $this->eventDispatcher->dispatch($event, ContactsSendEvent::NAME);
