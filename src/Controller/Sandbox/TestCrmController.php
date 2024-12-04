@@ -1,37 +1,26 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Sandbox;
 
 use App\Entity\Order;
 use App\Repository\ProductRepository;
+use App\Service\RetailCrm\ProductManager as RetailCrmProduct;
 use RetailCrm\Api\Enum\Product\ProductType;
 use RetailCrm\Api\Factory\SimpleClientFactory;
 use RetailCrm\Api\Interfaces\ApiExceptionInterface;
 use RetailCrm\Api\Interfaces\ClientExceptionInterface;
 use RetailCrm\Api\Model\Entity\Customers\Customer;
-use RetailCrm\Api\Model\Entity\Loyalty\OrderProduct;
-use RetailCrm\Api\Model\Entity\Store\OfferProduct;
 use RetailCrm\Api\Model\Entity\Store\PriceUploadInput;
 use RetailCrm\Api\Model\Entity\Store\PriceUploadPricesInput;
-use RetailCrm\Api\Model\Entity\Store\Product;
+use RetailCrm\Api\Model\Entity\Store\ProductCreateInput;
 use RetailCrm\Api\Model\Entity\Store\ProductEditGroupInput;
-use RetailCrm\Api\Model\Entity\Store\ProductGroup;
-use RetailCrm\Api\Model\Entity\Store\ProductOffer;
-use RetailCrm\Api\Model\Filter\Store\OfferFilterType;
 use RetailCrm\Api\Model\Request\Customers\CustomersCreateRequest;
-use RetailCrm\Api\Model\Request\Store\OffersRequest;
 use RetailCrm\Api\Model\Request\Store\PricesUploadRequest;
 use RetailCrm\Api\Model\Request\Store\ProductsBatchCreateRequest;
 use RetailCrm\Api\Model\Request\Store\ProductsRequest;
-use RetailCrm\Api\Model\Response\References\PriceTypesResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Service\RetailCrm\ProductManager as RetailCrmProduct;
-
-use App\Entity\Product as ProductEntity;
-
-use RetailCrm\Api\Model\Entity\Store\ProductCreateInput;
 
 class TestCrmController extends AbstractController
 {

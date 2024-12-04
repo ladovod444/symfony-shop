@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
-#[OA\Tag(name: "Products api")]
+#[OA\Tag(name: "Category api")]
 #[Route('/api/v1')]
 #[Security(name: "Bearer")]
 class CategoryController extends AbstractController

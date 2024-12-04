@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
-#[OA\Tag(name: "Products api")]
+#[OA\Tag(name: "Genres api")]
 #[Route('/api/v1')]
 #[Security(name: "Bearer")]
 class GenreController extends AbstractController

@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Sandbox;
 
 use App\Repository\ProductRepository;
 use App\Service\HttpClient;
 use App\Service\ProductImport;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use JetBrains\PhpStorm\NoReturn;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
