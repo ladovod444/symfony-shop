@@ -31,10 +31,11 @@ class GenreCrudController extends AbstractCrudController
         if (Crud::PAGE_EDIT !== $pageName && Crud::PAGE_NEW !== $pageName) {
 
             yield IntegerField::new('id');
-            yield $products;
+//            yield $products;
         }
         yield TextField::new('title');
         yield TextField::new('slug');
+        yield $products;
     }
 
 }
