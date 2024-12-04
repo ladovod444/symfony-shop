@@ -3,8 +3,11 @@
 namespace App\Service;
 
 use App\Entity\Category;
+use App\Entity\Genre;
 use App\Entity\Product;
 use App\Repository\CategoryRepository;
+use App\Repository\GenreRepository;
+use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use App\Service\RetailCrm\ProductsRetailcrmBus;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,14 +32,16 @@ class ProductImport
         private readonly ProductsBus $productsBus,
         private readonly ProductsRetailcrmBus $productsRetailcrmBus,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly CategoryRepository $categoryRepository
+        private readonly CategoryRepository $categoryRepository,
+        private readonly GenreRepository $genreRepository,
+        private readonly ProductRepository $productRepository,
     ) {
     }
 
     /**
      * @throws GuzzleException
      */
-    public function import(int $count): void
+    public function import(?int $count): void
     {
         $products_data = $this->httpClient->get(
             $this->fortnite_api_url,
@@ -55,8 +60,7 @@ class ProductImport
             ++$data_count;
             if (($data_count % $batchSize) === 0) {
                 $this->entityManager->flush();
-                $this->entityManager->clear(
-                ); // Detaches all objects from Doctrine!
+                $this->entityManager->clear(); // Detaches all objects from Doctrine!
             }
 
             // Если задано кол-во.
@@ -64,8 +68,7 @@ class ProductImport
                 break;
             }
         }
-        $this->entityManager->flush(
-        ); // Persist objects that did not make up an entire batch
+        $this->entityManager->flush(); // Persist objects that did not make up an entire batch
         $this->entityManager->clear();
         $this->logger->info('Finish importing products');
     }
@@ -81,31 +84,37 @@ class ProductImport
             $this->parameterBag->get('app:import_product_author')
         );
 
-        $product = new Product();
+        //$product = ;
+        $product = $this->productRepository->findOneBy(['sku' => $product_data['mainId']]) ?? new Product();
         $product->setTitle($product_data['displayName'])
-          ->setDescription($product_data['displayDescription'])
-          ->setCurrentPrice($product_data['price']['finalPrice'])
-          ->setRegularPrice($product_data['price']['regularPrice'])
-          ->setSku($product_data['mainId'])
-          ->setUser($user);
+            ->setDescription($product_data['displayDescription'])
+            ->setCurrentPrice($product_data['price']['finalPrice'])
+            ->setRegularPrice($product_data['price']['regularPrice'])
+            ->setSku($product_data['mainId'])
+            ->setUser($user);
         $category = $this->randomCategory();
+        $genre = $this->randomGenre();
+        $product->addGenre($genre);
+        //dd($category, $genre);
         $product->setCategory($category);
         $this->entityManager->persist($product);
+        //dd($product);
 
         // Отправить json сообщение, c id и урлом изображения.
-        $message = json_encode(
-            [
-            'product_id' => $product->getId(),
-            'product_image' => $product_data['displayAssets'][0]['url'],
-          ]
-        );
+        if (isset($product_data['displayAssets'][0])) {
+            $message = json_encode(
+                [
+                    'product_id' => $product->getId(),
+                    'product_image' => $product_data['displayAssets'][0]['url'],
+                ]
+            );
 
-        //$message = "test mess " . $product->getId();
+            //$message = "test mess " . $product->getId();
 
-        ////$this->bus->dispatch(ProductImageMessage::create($message));
-        ///
-        $this->productsBus->execute($message);
-
+            ////$this->bus->dispatch(ProductImageMessage::create($message));
+            ///
+            $this->productsBus->execute($message);
+        }
 
         // Создаем message для последующего создания товара в Retail crm
         $retailCrmMessage = json_encode(
@@ -125,7 +134,8 @@ class ProductImport
      *
      * @return \App\Entity\Category
      */
-    private function randomCategory(): Category
+    public function randomCategory(): Category
+//    private function randomCategory(): Category
     {
         $categories = $this->categoryRepository->findAll();
 
@@ -133,6 +143,21 @@ class ProductImport
         $rand = mt_rand(0, $category_count - 1);
 
         return $categories[$rand];
+    }
+
+    /**
+     * Adds Random category during import.
+     *
+     * @return \App\Entity\Genre
+     */
+    public function randomGenre(): Genre
+    {
+        $genres = $this->genreRepository->findAll();
+
+        $genre_count = count($genres);
+        $rand = mt_rand(0, $genre_count - 1);
+
+        return $genres[$rand];
     }
 
 }

@@ -39,6 +39,7 @@ class ProductCrudController extends AbstractCrudController
           ->setUploadDir('public/uploads/images')
           ->setLabel('Image');
         yield AssociationField::new('category')->autocomplete();
+        yield AssociationField::new('genre')->autocomplete();
         yield IntegerField::new('retailcrm_id')->setDisabled(true);
         // ->onlyOnIndex();
         // https://symfony.com/doc/4.x/EasyAdminBundle/fields/AssociationField.html
