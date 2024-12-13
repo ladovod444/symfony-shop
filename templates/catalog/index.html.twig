@@ -18,16 +18,16 @@
         <div class="form-item genre">
             {{ form_row(formSearch.genre) }}
         </div>
-{#        {{ form_widget(formSearch) }}#}
+        {#        {{ form_widget(formSearch) }} #}
         <div class="form-item">
             <button class="btn btn-primary">{{ button_label|default('Search') }}</button>
         </div>
         {{ form_end(formSearch) }}
     </div>
     <div class="products-wrapper">
-        {#    <h1>Hello {{ controller_name }}! ✅</h1> #}
         {% for product in pagination %}
-            <div class="product-teaser">
+
+                <a class="product-teaser" href="{{ path('app_product', {'product': product.id}) }}">
                 <div class="product-teaser_image">
                     <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.title }}"/>
                 </div>
@@ -41,8 +41,9 @@
                 </div>
 
                 <div class="product-teaser_price">{{ product.currentPrice }}</div>
+                </a>
 
-            </div>
+
         {% endfor %}
     </div>
 

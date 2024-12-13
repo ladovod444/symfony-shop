@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProductController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="products-main-wrapper">
+    <h1> {{ product.title }} ✅</h1>
+
+    <div class="product-content">
+        <div class="product-image">
+            <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.title }}"/>
+        </div>
+        <div class="product-main">
+            <div class="product-main_category">{{ product.category.title }}</div>
+
+            <div class="product-main_genre">
+                {% for genre in product.genre %}
+                    <span class="genre_item"> {{ genre.title }} </span>
+                {% endfor %}
+            </div>
+
+            <div class="product-main_price">{{ product.currentPrice }}</div>
+        </div>
+
+    </div>
+
+    <div class="last-seen">
+
+        {% for product in seenProducts %}
+            <a class="product-teaser" href="{{ path('app_product', {'product': product.id}) }}">
+                <div class="product-teaser_image">
+                    <img src="{{ asset('uploads/images/' ~ product.image) }}" alt="{{ product.title }}"/>
+                </div>
+                <div class="product-teaser_title">{{ product.title }}</div>
+                <div class="product-teaser_category">{{ product.category.title }}</div>
+
+                <div class="product-teaser_genre">
+                    {% for genre in product.genre %}
+                        <span class="genre_item"> {{ genre.title }} </span>
+                    {% endfor %}
+                </div>
+
+                <div class="product-teaser_price">{{ product.currentPrice }}</div>
+            </a>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

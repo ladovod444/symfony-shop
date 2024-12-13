@@ -20,6 +20,20 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    public function findBySeenProducts($count, $seenProducts): array
+    {
+        $products = $this->createQueryBuilder('p');
+
+        return $products
+            ->where('p.id IN (:seenProducts)')
+            ->setParameter('seenProducts', $seenProducts)
+            ->setMaxResults($count)
+//            ->orderBy('p.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+    }
+
     public function findByProductFilter(ProductFilter $productFilter): QueryBuilder
     {
         $products = $this->createQueryBuilder('p');
