@@ -20,15 +20,18 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findBySeenProducts($count, $seenProducts): array
+    public function findByRecentlyViewedProducts($count, $recentlyViewedProducts): array
     {
         $products = $this->createQueryBuilder('p');
 
         return $products
-            ->where('p.id IN (:seenProducts)')
-            ->setParameter('seenProducts', $seenProducts)
+//            ->leftJoin('App\Entity\RecentlyViewed', 'rw', Join::WITH, 'p.id = rw.product_id')
+            ->where('p.id IN (:recentlyViewedProducts)')
+            ->setParameter('recentlyViewedProducts', $recentlyViewedProducts)
+
             ->setMaxResults($count)
-//            ->orderBy('p.id', 'DESC')
+
+//            ->orderBy('rw.viewed', 'DESC')
             ->getQuery()
             ->getResult();
 
